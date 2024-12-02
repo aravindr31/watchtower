@@ -1,6 +1,6 @@
 import { createMovie, getAllMovies } from "../../lib/movies";
 
-export const GET = async () => {
+export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const page = reqUrl.searchParams.get("page") || 1;
   const movies = await getAllMovies(page);
