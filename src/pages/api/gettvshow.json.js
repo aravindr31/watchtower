@@ -1,4 +1,4 @@
-import { TMDB_BASEURL, TMDB_BASEURL, accountId } from "../../lib/commonExports";
+import { TMDB_BASEURL, TMDB_HEADER, accountId } from "../../lib/commonExports";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
@@ -7,7 +7,7 @@ export const GET = async ({ request }) => {
   const url = `${TMDB_BASEURL}/account/${accountId}/watchlist/tv?sort_by=created_at.desc&page=${pageValue}`;
 
   try {
-    const response = await fetch(url, TMDB_BASEURL);
+    const response = await fetch(url, TMDB_HEADER);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
