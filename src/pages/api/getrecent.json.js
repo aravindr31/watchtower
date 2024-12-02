@@ -1,6 +1,6 @@
 import {
-  tmdbAPI_baseUrl,
-  tmdbAPI_fetchOptions,
+  TMDB_BASEURL,
+  TMDB_HEADER,
   watchedlistId,
 } from "../../lib/commonExports";
 
@@ -8,10 +8,10 @@ export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const pageValue = reqUrl.searchParams.get("page") || 1;
 
-  const url = `${tmdbAPI_baseUrl}/list/${watchedlistId}?sort_by=created_at.asc&page=${pageValue}`;
+  const url = `${TMDB_BASEURL}/list/${watchedlistId}?sort_by=created_at.asc&page=${pageValue}`;
 
   try {
-    const response = await fetch(url, tmdbAPI_fetchOptions);
+    const response = await fetch(url, TMDB_HEADER);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }

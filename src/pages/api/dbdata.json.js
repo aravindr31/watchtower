@@ -1,4 +1,4 @@
-import { createMovie, getAllMovies, getPageWiseMovies } from "../../lib/movies";
+import { createMovie, getPageWiseMovies } from "../../lib/movies";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);

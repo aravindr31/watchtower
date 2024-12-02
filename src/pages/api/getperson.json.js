@@ -1,13 +1,13 @@
-import { tmdbAPI_baseUrl, tmdbAPI_fetchOptions } from "../../lib/commonExports";
+import { TMDB_BASEURL, TMDB_HEADER } from "../../lib/commonExports";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const id = reqUrl.searchParams.get("person") || 1;
 
-  const url = `${tmdbAPI_baseUrl}/person/${id}?append_to_response=external_ids,combined_credits`;
+  const url = `${TMDB_BASEURL}/person/${id}?append_to_response=external_ids,combined_credits`;
 
   try {
-    const response = await fetch(url, tmdbAPI_fetchOptions);
+    const response = await fetch(url, TMDB_HEADER);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }

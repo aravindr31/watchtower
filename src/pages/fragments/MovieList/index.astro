@@ -1,24 +1,19 @@
 ---
 import InternalError from "../../../components/InternalError.astro";
-// import Loading from "../../../components/Loading.astro";
+import Loading from "../../../components/Loading.astro";
 import MovieCard from "../../../components/MovieCard.astro";
 import Pagination from "../../../components/Pagination.astro";
-import { getAllMovies } from "../../../lib/movies";
-// import Ceil from Math
+import { Suspense } from "astro-suspense/components";
 
 const pageValue = Astro.url.searchParams.get("page") || 1;
 
 let isError = false;
-let getMoviesFromDB = null;
 let total_pages = 1;
 let movieArray: any[] = [];
 try {
-  getMoviesFromDB = await fetch(
-    `${Astro.url.origin}/api/dbdata.json?page=${pageValue}`,
-    {
-      method: "GET",
-    }
-  )
+  await fetch(`${Astro.url.origin}/api/dbdata.json?page=${pageValue}`, {
+    method: "GET",
+  })
     .then(async (res) => {
       if (res.status != 200) {
         throw new Error("DB fetch Failed");
@@ -38,7 +33,6 @@ try {
 }
 ---
 
-{isError && <InternalError />}
 {
   !isError && movieArray.length > 0 && (
     <div class="container mx-auto px-4 pt-16 mb-16">
@@ -57,3 +51,6 @@ try {
     </div>
   )
 }
+
+<!-- {movieArray.length > 0 &&
+            movieArray?.map((movie: any) => <MovieCard movie={movie} />)} -->
