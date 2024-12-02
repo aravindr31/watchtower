@@ -1,5 +1,6 @@
 ---
 import InternalError from "../../../components/InternalError.astro";
+import Loading from "../../../components/Loading.astro";
 // import Loading from "../../../components/Loading.astro";
 import MovieCard from "../../../components/MovieCard.astro";
 import Pagination from "../../../components/Pagination.astro";
@@ -12,6 +13,7 @@ let isError = false;
 let getMoviesFromDB = null;
 let total_pages = 1;
 let movieArray: any[] = [];
+let isLoading = true;
 try {
   getMoviesFromDB = await fetch(
     `${Astro.url.origin}/api/dbdata.json?page=${pageValue}`,
@@ -32,12 +34,14 @@ try {
       isError = true;
       console.log(err);
     });
+  isLoading = false;
 } catch (error) {
   isError = true;
   console.error(error);
 }
 ---
 
+{!isError && isLoading && <Loading />}
 {isError && <InternalError />}
 {
   !isError && movieArray.length > 0 && (
