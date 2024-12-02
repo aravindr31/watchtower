@@ -1,26 +1,19 @@
 ---
 import InternalError from "../../../components/InternalError.astro";
 import Loading from "../../../components/Loading.astro";
-// import Loading from "../../../components/Loading.astro";
 import MovieCard from "../../../components/MovieCard.astro";
 import Pagination from "../../../components/Pagination.astro";
-import { getAllMovies } from "../../../lib/movies";
-// import Ceil from Math
+import { Suspense } from "astro-suspense/components";
 
 const pageValue = Astro.url.searchParams.get("page") || 1;
 
 let isError = false;
-let getMoviesFromDB = null;
 let total_pages = 1;
 let movieArray: any[] = [];
-let isLoading = true;
 try {
-  getMoviesFromDB = await fetch(
-    `${Astro.url.origin}/api/dbdata.json?page=${pageValue}`,
-    {
-      method: "GET",
-    }
-  )
+  await fetch(`${Astro.url.origin}/api/dbdata.json?page=${pageValue}`, {
+    method: "GET",
+  })
     .then(async (res) => {
       if (res.status != 200) {
         throw new Error("DB fetch Failed");
@@ -34,15 +27,13 @@ try {
       isError = true;
       console.log(err);
     });
-  isLoading = false;
 } catch (error) {
   isError = true;
   console.error(error);
 }
 ---
 
-{!isError && isLoading && <Loading />}
-{isError && <InternalError />}
+{!isError && <InternalError />}
 {
   !isError && movieArray.length > 0 && (
     <div class="container mx-auto px-4 pt-16 mb-16">
@@ -50,14 +41,24 @@ try {
         <h2 class="uppercase tracking-wider text-orange-500 text-lg font-semibold">
           Recent Watches
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-          {movieArray.length > 0 &&
-            movieArray?.map((movie: any) => <MovieCard movie={movie} />)}
-        </div>
-        {total_pages > 1 && (
-          <Pagination currentPage={pageValue} totalPages={total_pages} />
-        )}
+        <Suspense>
+          <slot name="fallback">
+            <Loading />
+          </slot>
+          <slot>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+              {movieArray.length > 0 &&
+                movieArray?.map((movie: any) => <MovieCard movie={movie} />)}
+            </div>
+          </slot>
+          {total_pages > 1 && (
+            <Pagination currentPage={pageValue} totalPages={total_pages} />
+          )}
+        </Suspense>
       </div>
     </div>
   )
 }
+
+<!-- {movieArray.length > 0 &&
+            movieArray?.map((movie: any) => <MovieCard movie={movie} />)} -->
