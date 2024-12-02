@@ -6,7 +6,7 @@ import tailwind from "@astrojs/tailwind";
 import vercel from "@astrojs/vercel/serverless";
 
 export default defineConfig({
-  site: "https://watchtower.raravind.in",
+  site: "https://watchtower-roan.vercel.app/",
   integrations: [tailwind()],
   output: "server",
   adapter: vercel(),
