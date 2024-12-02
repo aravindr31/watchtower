@@ -1,16 +1,12 @@
-import {
-  tmdbAPI_baseUrl,
-  tmdbAPI_fetchOptions,
-  accountId,
-} from "../../lib/commonExports";
+import { TMDB_BASEURL, TMDB_HEADER, accountId } from "../../lib/commonExports";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const movieId = reqUrl.searchParams.get("id") || 1;
 
-  const url = `${tmdbAPI_baseUrl}/movie/${movieId}?append_to_response=credits,videos,images`;
+  const url = `${TMDB_BASEURL}/movie/${movieId}?append_to_response=credits,videos,images`;
   try {
-    const response = await fetch(url, tmdbAPI_fetchOptions);
+    const response = await fetch(url, TMDB_HEADER);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }

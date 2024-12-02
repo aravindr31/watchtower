@@ -5,11 +5,9 @@ import tailwind from "@astrojs/tailwind";
 
 import vercel from "@astrojs/vercel/serverless";
 
-import suspense from "astro-suspense";
-
 export default defineConfig({
   site: "https://watchtower-roan.vercel.app/",
-  integrations: [tailwind(), suspense()],
+  integrations: [tailwind()],
   output: "server",
   adapter: vercel(),
   experimental: {

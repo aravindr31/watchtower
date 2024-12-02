@@ -33,7 +33,6 @@ try {
 }
 ---
 
-{!isError && <InternalError />}
 {
   !isError && movieArray.length > 0 && (
     <div class="container mx-auto px-4 pt-16 mb-16">
@@ -41,20 +40,13 @@ try {
         <h2 class="uppercase tracking-wider text-orange-500 text-lg font-semibold">
           Recent Watches
         </h2>
-        <Suspense>
-          <slot name="fallback">
-            <Loading />
-          </slot>
-          <slot>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-              {movieArray.length > 0 &&
-                movieArray?.map((movie: any) => <MovieCard movie={movie} />)}
-            </div>
-          </slot>
-          {total_pages > 1 && (
-            <Pagination currentPage={pageValue} totalPages={total_pages} />
-          )}
-        </Suspense>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+          {movieArray.length > 0 &&
+            movieArray?.map((movie: any) => <MovieCard movie={movie} />)}
+        </div>
+        {total_pages > 1 && (
+          <Pagination currentPage={pageValue} totalPages={total_pages} />
+        )}
       </div>
     </div>
   )
