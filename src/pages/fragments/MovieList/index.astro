@@ -1,0 +1,59 @@
+---
+import InternalError from "../../../components/InternalError.astro";
+// import Loading from "../../../components/Loading.astro";
+import MovieCard from "../../../components/MovieCard.astro";
+import Pagination from "../../../components/Pagination.astro";
+import { getAllMovies } from "../../../lib/movies";
+// import Ceil from Math
+
+const pageValue = Astro.url.searchParams.get("page") || 1;
+
+let isError = false;
+let getMoviesFromDB = null;
+let total_pages = 1;
+let movieArray: any[] = [];
+try {
+  getMoviesFromDB = await fetch(
+    `${Astro.url.origin}/api/dbdata.json?page=${pageValue}`,
+    {
+      method: "GET",
+    }
+  )
+    .then(async (res) => {
+      if (res.status != 200) {
+        throw new Error("DB fetch Failed");
+      } else {
+        const parsedRes = await res.json();
+        total_pages = parsedRes?.totalPages;
+        movieArray = parsedRes?.movies;
+      }
+    })
+    .catch((err) => {
+      isError = true;
+      console.log(err);
+    });
+} catch (error) {
+  isError = true;
+  console.error(error);
+}
+---
+
+{isError && <InternalError />}
+{
+  !isError && movieArray.length > 0 && (
+    <div class="container mx-auto px-4 pt-16 mb-16">
+      <div class="popular-movies">
+        <h2 class="uppercase tracking-wider text-orange-500 text-lg font-semibold">
+          Recent Watches
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+          {movieArray.length > 0 &&
+            movieArray?.map((movie: any) => <MovieCard movie={movie} />)}
+        </div>
+        {total_pages > 1 && (
+          <Pagination currentPage={pageValue} totalPages={total_pages} />
+        )}
+      </div>
+    </div>
+  )
+}

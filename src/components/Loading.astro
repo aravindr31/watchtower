@@ -1,0 +1,60 @@
+---
+export const prerender = true;
+---
+
+<div
+  class="fixed top-0 left-0 flex items-center justify-center w-full h-screen bg-gray-800"
+>
+  <div class="relative flex items-center justify-center w-40 h-20 p-6">
+    <span class="absolute w-4 h-4 bg-yellow-500 rounded-full animate-dotsA"
+    ></span>
+    <span class="absolute w-4 h-4 bg-yellow-500 rounded-full animate-dotsB"
+    ></span>
+  </div>
+</div>
+
+<style>
+  @keyframes loading-dotsA {
+    0% {
+      transform: none;
+    }
+    25% {
+      transform: translateX(2rem);
+    }
+    50% {
+      transform: none;
+    }
+    75% {
+      transform: translateY(2rem);
+    }
+    100% {
+      transform: none;
+    }
+  }
+
+  @keyframes loading-dotsB {
+    0% {
+      transform: none;
+    }
+    25% {
+      transform: translateX(-2rem);
+    }
+    50% {
+      transform: none;
+    }
+    75% {
+      transform: translateY(-2rem);
+    }
+    100% {
+      transform: none;
+    }
+  }
+
+  .animate-dotsA {
+    animation: loading-dotsA 0.5s infinite linear;
+  }
+
+  .animate-dotsB {
+    animation: loading-dotsB 0.5s infinite linear;
+  }
+</style>
