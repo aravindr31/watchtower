@@ -1,8 +1,12 @@
 import { ShowCollection } from "./db";
 
 export const getAllShows = async () => {
+  const totalItems = await (await ShowCollection()).countDocuments();
   const showData = await (await ShowCollection()).find({}).toArray();
-  return showData;
+  return {
+    totalItems,
+    shows: showData,
+  };
 };
 
 export const createShow = async (newShow) => {

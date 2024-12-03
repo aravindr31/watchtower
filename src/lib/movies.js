@@ -1,8 +1,12 @@
 import { MovieCollection } from "./db";
 
 export const getAllMovies = async () => {
+  const totalItems = await (await MovieCollection()).countDocuments();
   const movieData = await (await MovieCollection()).find({}).toArray();
-  return movieData;
+  return {
+    movies: movieData,
+    totalItems,
+  };
 };
 
 export const createMovie = async (newMovie) => {
