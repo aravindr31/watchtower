@@ -3,41 +3,92 @@ const { currentPage, totalPages } = Astro.props;
 
 const pageUrl = Astro.url;
 
-// Generate the page URLs
+// Helper function to create the pagination URL
 const getPageUrl = (page: number) => {
-  page != 1
-    ? pageUrl.searchParams.set("page", `${page}`)
-    : pageUrl.searchParams.delete("page");
-
-  return pageUrl;
+  if (page !== 1) {
+    pageUrl.searchParams.set("page", `${page}`);
+  } else {
+    pageUrl.searchParams.delete("page");
+  }
+  return pageUrl.toString();
 };
+
+// Generate the range of pages to display
+const generatePageRange = (currentPage: number, totalPages: number) => {
+  const pages = [];
+  const delta = 1; // Number of pages to show around the current page
+
+  if (totalPages <= 7) {
+    // If there are 7 or fewer pages, display all pages
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+  } else {
+    // Always show the first 2 pages
+    pages.push(1, 2);
+
+    if (currentPage > 4) {
+      pages.push("...");
+    }
+
+    // Show the middle range around the current page
+    const startPage = Math.max(3, currentPage - delta);
+    const endPage = Math.min(totalPages - 2, currentPage + delta);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    // Add ellipsis if needed before the last 2 pages
+    if (currentPage < totalPages - 3) {
+      pages.push("...");
+    }
+
+    // Always show the last 2 pages
+    pages.push(totalPages - 1, totalPages);
+  }
+
+  return pages;
+};
+
+const pageRange = generatePageRange(
+  parseInt(currentPage),
+  parseInt(totalPages)
+);
 ---
 
 <div class="flex items-center justify-center space-x-2 p-4">
+  <!-- Previous Button -->
   <a
     href={currentPage > 1 ? getPageUrl(currentPage - 1) : "#"}
     aria-disabled={currentPage === 1}
     class={`px-4 py-2 rounded text-white bg-[#28a745] ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 hover:text-gray-800"}`}
   >
-    Previous
+    <span class="text-3xl">&laquo;</span>
   </a>
 
+  <!-- Page Numbers -->
   {
-    Array.from({ length: totalPages }, (_, i) => (
-      <a
-        href={getPageUrl(i + 1)}
-        class={`px-4 py-2  text-gray-600 ${currentPage === i + 1 ? "" : "hover:bg-[#28a745] hover:text-white hover:rounded-lg"}`}
-      >
-        {i + 1}
-      </a>
-    ))
+    pageRange.map((page) =>
+      page === "..." ? (
+        <span class="px-4 py-2 text-gray-600">...</span>
+      ) : (
+        <a
+          href={getPageUrl(page)}
+          class={`px-4 py-2 text-gray-600 ${currentPage === page ? "bg-[#28a745] text-white rounded-lg" : "hover:bg-[#28a745] hover:text-white hover:rounded-full"}`}
+        >
+          {page}
+        </a>
+      )
+    )
   }
 
+  <!-- Next Button -->
   <a
     href={currentPage < totalPages ? getPageUrl(currentPage + 1) : "#"}
     aria-disabled={currentPage === totalPages}
     class={`px-4 py-2 rounded text-white bg-[#28a745] ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 hover:text-gray-800"}`}
   >
-    Next
+    <span class="text-3xl">&raquo</span>
   </a>
 </div>
