@@ -4,7 +4,7 @@ const { currentPage, totalPages } = Astro.props;
 const pageUrl = Astro.url;
 
 // Helper function to create the pagination URL
-const getPageUrl = (page: number) => {
+const getPageUrl = (page: number | string) => {
   if (page !== 1) {
     pageUrl.searchParams.set("page", `${page}`);
   } else {
