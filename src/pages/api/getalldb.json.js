@@ -1,4 +1,5 @@
 import { createMovie, getAllMovies } from "../../lib/movies";
+import { createShow, getAllShows } from "../../lib/shows";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
@@ -10,16 +11,29 @@ export const GET = async ({ request }) => {
       statusText: "Not found",
     });
   }
-
-  return new Response(JSON.stringify(movies), {
+  const shows = await getAllShows(page);
+  if (!shows) {
+    return new Response(null, {
+      status: 404,
+      statusText: "Not found",
+    });
+  }
+  return new Response(JSON.stringify({ movies, shows }), {
     status: 200,
   });
 };
 
 export const POST = async ({ request }) => {
-  const newMovie = await request.json();
-  const movie = await createMovie(newMovie);
-  return new Response(JSON.stringify(movie), {
+  const reqUrl = new URL(request.url);
+  const selector = reqUrl.searchParams.get("insert") || 1;
+  const data = await request.json();
+  const dataAdded =
+    selector === "movie"
+      ? await createMovie(data)
+      : selector === "tv"
+      ? await createShow(data)
+      : null;
+  return new Response(JSON.stringify(dataAdded), {
     status: 200,
   });
 };

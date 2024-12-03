@@ -3,26 +3,53 @@ import InternalError from "../../../components/InternalError.astro";
 import Pagination from "../../../components/Pagination.astro";
 import TvShowCard from "../../../components/TvShowCard.astro";
 
+// const pageValue = Astro.url.searchParams.get("page") || 1;
+
+// let isError = false;
+
+// const getTvShows = await fetch(
+//   `${Astro.url.origin}/api/gettvshow.json?page=${pageValue}`,
+//   {
+//     method: "GET",
+//   }
+// )
+//   .then(async (res) => {
+//     if (!res.ok) isError = true;
+//     return await res.json();
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//     isError = true;
+//   });
+
+// const tvList = getTvShows?.results || [];
+
 const pageValue = Astro.url.searchParams.get("page") || 1;
 
 let isError = false;
-
-const getTvShows = await fetch(
-  `${Astro.url.origin}/api/gettvshow.json?page=${pageValue}`,
-  {
+let total_pages = 1;
+let tvList: any[] = [];
+try {
+  await fetch(`${Astro.url.origin}/api/getdbshows.json?page=${pageValue}`, {
     method: "GET",
-  }
-)
-  .then(async (res) => {
-    if (!res.ok) isError = true;
-    return await res.json();
   })
-  .catch((err) => {
-    console.log(err);
-    isError = true;
-  });
-
-const tvList = getTvShows?.results || [];
+    .then(async (res) => {
+      if (res.status != 200) {
+        throw new Error("DB fetch Failed");
+      } else {
+        const parsedRes = await res.json();
+        total_pages = parsedRes?.totalPages;
+        tvList = parsedRes?.shows;
+      }
+    })
+    .catch((err) => {
+      isError = true;
+      console.log(err);
+    });
+} catch (error) {
+  isError = true;
+  console.error(error);
+}
 ---
 
 {isError && <InternalError />}
@@ -38,11 +65,8 @@ const tvList = getTvShows?.results || [];
             <TvShowCard show={show} />
           ))}
         </div>
-        {getTvShows?.total_pages > 1 && (
-          <Pagination
-            currentPage={pageValue}
-            totalPages={getTvShows?.total_pages}
-          />
+        {total_pages > 1 && (
+          <Pagination currentPage={pageValue} totalPages={total_pages} />
         )}
       </div>
     </div>

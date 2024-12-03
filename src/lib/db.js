@@ -22,3 +22,8 @@ export const MovieCollection = async () => {
   const db = await getDB();
   return db.collection("movievault");
 };
+
+export const ShowCollection = async () => {
+  const db = await getDB();
+  return db.collection("showvault");
+};
