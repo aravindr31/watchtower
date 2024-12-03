@@ -4,15 +4,13 @@ import Loading from "../../../components/Loading.astro";
 import MovieCard from "../../../components/MovieCard.astro";
 import Pagination from "../../../components/Pagination.astro";
 
-// import { Pagination } from "accessible-astro-components";
-
 const pageValue = Astro.url.searchParams.get("page") || 1;
 
 let isError = false;
 let total_pages = 1;
 let movieArray: any[] = [];
 try {
-  await fetch(`${Astro.url.origin}/api/dbdata.json?page=${pageValue}`, {
+  await fetch(`${Astro.url.origin}/api/getdbmovies.json?page=${pageValue}`, {
     method: "GET",
   })
     .then(async (res) => {
