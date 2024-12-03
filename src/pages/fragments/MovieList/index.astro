@@ -3,7 +3,8 @@ import InternalError from "../../../components/InternalError.astro";
 import Loading from "../../../components/Loading.astro";
 import MovieCard from "../../../components/MovieCard.astro";
 import Pagination from "../../../components/Pagination.astro";
-import { Suspense } from "astro-suspense/components";
+
+// import { Pagination } from "accessible-astro-components";
 
 const pageValue = Astro.url.searchParams.get("page") || 1;
 
@@ -33,6 +34,7 @@ try {
 }
 ---
 
+{isError && <InternalError />}
 {
   !isError && movieArray.length > 0 && (
     <div class="container mx-auto px-4 pt-16 mb-16">
@@ -51,6 +53,3 @@ try {
     </div>
   )
 }
-
-<!-- {movieArray.length > 0 &&
-            movieArray?.map((movie: any) => <MovieCard movie={movie} />)} -->
