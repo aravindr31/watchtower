@@ -8,14 +8,30 @@ export const getAllMovies = async () => {
   try {
     const collection = await getMovieCollection();
     const totalItems = await collection.countDocuments();
-    const movieData = await collection.find({}).toArray();
-    return {
-      movies: movieData,
-      totalItems,
-    };
+    return totalItems;
   } catch (err) {
     console.log("Error Fetching all movies", err.message);
     throw new Error("failed to fetch all movies");
+  }
+};
+
+export const checkIfMovieExists = async (idList) => {
+  try {
+    if (idList.length > 0) {
+      const collection = await getMovieCollection();
+      const query = { id: { $in: idList } };
+      const matchingMovies = await collection
+        .find(query, { projection: { _id: 0, id: 1 } })
+        .toArray();
+      const existingIds = matchingMovies.map((item) => item.id);
+      const newIds = idList.filter((id) => !existingIds.includes(id));
+      return newIds;
+    } else {
+      throw new Error("idList is empty");
+    }
+  } catch (error) {
+    console.log("Error checking ids -", err.message);
+    throw new Error("Error checking ids");
   }
 };
 
