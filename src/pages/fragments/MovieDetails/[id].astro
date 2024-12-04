@@ -2,22 +2,35 @@
 import { Image } from 'astro:assets';
 import Modal from '../../../components/Modal.astro';
 import InternalError from '../../../components/InternalError.astro';
+import Loading from '../../../components/Loading.astro';
 
+interface Movie {
+    title:string;
+    poster_path: string;
+    vote_average: number;
+    release_date: string;
+    genres: string;
+    crew:{name:string;job:string}[];
+    cast:{id:number; profile_path:string; name:string; character:string}[];
+    images:{file_path:string}[];
+    videos:{results:{key:string}[]};
+}
 
 const { id } = Astro.params;
 
 const url = `${Astro.url.origin}/api/getmdetail.json?id=${id}`;
 
-let movie = null;
+let movie:Movie | null = null;
 let isError = false;
+let isLoading  =true
+let retires = 5
+const fetchMovieDetails = async () =>{
 try{
-
-const data = await fetch(url).then(async(res)=>{
-    if (res.ok) {return await res.json()}
-    else {
-        throw new Error(`Failed with status code ${res.status}: ${res.statusText}`)
+const response = await fetch(url)
+    if (!response.ok) {
+        throw new Error(`Failed with status code ${response.status}: ${response.statusText}`)
     }
-})
+const data = await response.json()
 
 movie = {
     ...data,
@@ -41,17 +54,25 @@ movie = {
     images: data?.images.backdrops.slice(0, 9),
 }
 } catch(err){
+    if (retires>0){
+        retires--;
+        console.log(`Retrying fetch.. Total retires left - ${retires}`);
+        await fetchMovieDetails();
+    }else{
     console.log(err)
-    isError = true
+    isError = true}
+}finally{
+    isLoading =false
 }
-
+}
+await fetchMovieDetails()
 ---
 
-<!-- {isLoading && <Loading />} Show Loading Spinner -->
 {isError && (
 <InternalError/>
 )}
-{ !isError && movie && (
+{isLoading && <Loading />}
+{ !isError && !isLoading && movie && (
     <div class="movie-info border-b border-gray-800">
         <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row">
             <div class="flex-none">
@@ -140,7 +161,6 @@ movie = {
                             isOpen = true
                             image='https://image.tmdb.org/t/p/original/${image.file_path}'
                         `}
-                        href="#"
                     >
                         <Image inferSize={true} src={`https://image.tmdb.org/t/p/w500${image.file_path}`} loading="lazy" alt={movie.title} class="hover:opacity-75 transition ease-in-out duration-150"/>
                     </a>
