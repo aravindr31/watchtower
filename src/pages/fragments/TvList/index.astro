@@ -19,6 +19,7 @@ const fetchShows = async () => {
         method: "GET",
       }
     );
+    if (!response.ok) throw new Error(`DB Fetch failed ${response.status}`);
     const parsedRes = await response.json();
     total_pages = parsedRes?.totalPages;
     tvList = parsedRes?.shows;
