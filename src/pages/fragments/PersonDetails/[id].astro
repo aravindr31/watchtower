@@ -1,114 +1,128 @@
 ---
+import InternalError from "../../../components/InternalError.astro";
+import Loading from "../../../components/Loading.astro";
+
 const { id } = Astro.params;
 
 const url = `${Astro.url.origin}/api/getperson.json?person=${id}`;
 
 let person = null;
 let isError = false;
+let isLoading = true;
 let castMovies = [];
 let knownFor = null;
 let social = null;
 let credits = null;
+let retires = 5;
 
 const calculateAge = (birthday: any | Date) => {
   const ageDifMs = Date.now() - birthday;
   const ageDate = new Date(ageDifMs);
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 };
-
-try {
-  const profileData = await fetch(url).then(async (res) => {
-    if (res.ok) {
-      return await res.json();
-    } else {
+const fetchPersonDetails = async () => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok)
       throw new Error(
-        `Failed with status code ${res.status}: ${res.statusText}`
+        `Failed with status code ${response.status}: ${response.statusText}`
       );
+    const profileData = await response.json();
+
+    person = {
+      ...profileData,
+      profile_path: profileData.profile_path
+        ? "https://image.tmdb.org/t/p/w300/" + profileData.profile_path
+        : "https://via.placeholder.com/300x450",
+      birthday: new Date(profileData.birthday).toLocaleDateString("en-us", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+      age: calculateAge(new Date(profileData.birthday)),
+    };
+    castMovies = profileData.combined_credits.cast;
+
+    knownFor = castMovies
+      .sort(
+        (a: { popularity: number }, b: { popularity: number }) =>
+          b.popularity - a.popularity
+      )
+      .slice(0, 5)
+      .map(
+        (movie: {
+          title: string;
+          name: string;
+          poster_path: string;
+          media_type: string;
+          id: string;
+        }) => {
+          const title = movie.title || movie.name || "Untitled";
+
+          return {
+            ...movie,
+            title,
+            poster_path: movie.poster_path
+              ? "https://image.tmdb.org/t/p/w185/" + movie.poster_path
+              : "https://via.placeholder.com/185x278",
+            linkToPage:
+              movie.media_type === "movie"
+                ? `/movies/${movie.id}`
+                : `/tv/${movie.id}`,
+          };
+        }
+      );
+    social = profileData.external_ids;
+
+    credits = castMovies
+      .map(
+        (movie: {
+          title: string;
+          name: string;
+          release_date: string;
+          first_air_date: string;
+          media_type: string;
+          id: string;
+        }) => {
+          const title = movie.title || movie.name || "Untitled";
+          const release_date = movie.release_date || movie.first_air_date || "";
+
+          return {
+            ...movie,
+            title,
+            release_date,
+            release_year: release_date ? release_date.split("-")[0] : "Future",
+            linkToPage:
+              movie.media_type === "movie"
+                ? `/movies/${movie.id}`
+                : `/tv/${movie.id}`,
+          };
+        }
+      )
+      .sort(
+        (
+          a: { release_date: string | number | Date },
+          b: { release_date: string | number | Date }
+        ) => new Date(b.release_date) - new Date(a.release_date)
+      );
+  } catch (err) {
+    console.log(err);
+    if (retires > 0) {
+      retires--;
+      console.log(`Retrying fetch.. Total retires left - ${retires}`);
+      await fetchPersonDetails();
     }
-  });
-
-  person = {
-    ...profileData,
-    profile_path: profileData.profile_path
-      ? "https://image.tmdb.org/t/p/w300/" + profileData.profile_path
-      : "https://via.placeholder.com/300x450",
-    birthday: new Date(profileData.birthday).toLocaleDateString("en-us", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }),
-    age: calculateAge(new Date(profileData.birthday)),
-  };
-  castMovies = profileData.combined_credits.cast;
-
-  knownFor = castMovies
-    .sort(
-      (a: { popularity: number }, b: { popularity: number }) =>
-        b.popularity - a.popularity
-    )
-    .slice(0, 5)
-    .map(
-      (movie: {
-        title: string;
-        name: string;
-        poster_path: string;
-        media_type: string;
-        id: string;
-      }) => {
-        const title = movie.title || movie.name || "Untitled";
-
-        return {
-          ...movie,
-          title,
-          poster_path: movie.poster_path
-            ? "https://image.tmdb.org/t/p/w185/" + movie.poster_path
-            : "https://via.placeholder.com/185x278",
-          linkToPage:
-            movie.media_type === "movie"
-              ? `/movies/${movie.id}`
-              : `/tv/${movie.id}`,
-        };
-      }
-    );
-  social = profileData.external_ids;
-
-  credits = castMovies
-    .map(
-      (movie: {
-        title: string;
-        name: string;
-        release_date: string;
-        first_air_date: string;
-        media_type: string;
-        id: string;
-      }) => {
-        const title = movie.title || movie.name || "Untitled";
-        const release_date = movie.release_date || movie.first_air_date || "";
-
-        return {
-          ...movie,
-          title,
-          release_date,
-          release_year: release_date ? release_date.split("-")[0] : "Future",
-          linkToPage:
-            movie.media_type === "movie"
-              ? `/movies/${movie.id}`
-              : `/tv/${movie.id}`,
-        };
-      }
-    )
-    .sort(
-      (
-        a: { release_date: string | number | Date },
-        b: { release_date: string | number | Date }
-      ) => new Date(b.release_date) - new Date(a.release_date)
-    );
-} catch (err) {
-  console.log(err);
-  isError = true;
-}
+    isError = true;
+  } finally {
+    isLoading = false;
+  }
+};
+await fetchPersonDetails()
 ---
 
+{isError && <InternalError />}
+{isLoading && <Loading />}
+{ !isError && !isLoading && person &&(
 <div class="movie-info border-b border-gray-800">
   <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row">
     <div class="flex-none">
@@ -273,4 +287,5 @@ try {
       }
     </ul>
   </div>
-</div>
+</div>)
+}

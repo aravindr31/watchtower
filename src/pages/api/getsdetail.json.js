@@ -7,8 +7,6 @@ export const GET = async ({ request }) => {
   const url = `${TMDB_BASEURL}/tv/${movieId}?append_to_response=credits,videos,images`;
   try {
     const response = await fetch(url, TMDB_HEADER);
-    console.log("from getmovies");
-    console.log(response);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
