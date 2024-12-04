@@ -30,7 +30,7 @@ export const POST = async ({ request }) => {
   const dataAdded =
     selector === "movie"
       ? await createMovie(data)
-      : selector === "tv"
+      : selector === "show"
       ? await createShow(data)
       : null;
   return new Response(JSON.stringify(dataAdded), {
