@@ -1,72 +1,79 @@
 ---
 import InternalError from "../../../components/InternalError.astro";
+import Loading from "../../../components/Loading.astro";
 import Pagination from "../../../components/Pagination.astro";
 import TvShowCard from "../../../components/TvShowCard.astro";
-
-// const pageValue = Astro.url.searchParams.get("page") || 1;
-
-// let isError = false;
-
-// const getTvShows = await fetch(
-//   `${Astro.url.origin}/api/gettvshow.json?page=${pageValue}`,
-//   {
-//     method: "GET",
-//   }
-// )
-//   .then(async (res) => {
-//     if (!res.ok) isError = true;
-//     return await res.json();
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//     isError = true;
-//   });
-
-// const tvList = getTvShows?.results || [];
 
 const pageValue = Astro.url.searchParams.get("page") || 1;
 
 let isError = false;
+let isLoading = true;
 let total_pages = 1;
 let tvList: any[] = [];
-try {
-  await fetch(`${Astro.url.origin}/api/getdbshows.json?page=${pageValue}`, {
-    method: "GET",
-  })
-    .then(async (res) => {
-      if (res.status != 200) {
-        throw new Error("DB fetch Failed");
-      } else {
-        const parsedRes = await res.json();
-        total_pages = parsedRes?.totalPages;
-        tvList = parsedRes?.shows;
+let retries = 5;
+const fetchShows = async () => {
+  try {
+    const response = await fetch(
+      `${Astro.url.origin}/api/getdbshows.json?page=${pageValue}`,
+      {
+        method: "GET",
       }
-    })
-    .catch((err) => {
+    );
+    const parsedRes = await response.json();
+    total_pages = parsedRes?.totalPages;
+    tvList = parsedRes?.shows;
+  } catch (error) {
+    if (retries > 0) {
+      retries--;
+      console.log(`Retrying fetch.. Total retires left - ${retries}`);
+      await fetchShows();
+    } else {
       isError = true;
-      console.log(err);
-    });
-} catch (error) {
-  isError = true;
-  console.error(error);
-}
+      console.error(error);
+    }
+  } finally {
+    isLoading = false;
+  }
+};
+await fetchShows();
 ---
 
 {isError && <InternalError />}
+{isLoading && <Loading />}
 {
-  !isError && tvList.length > 0 && (
+  !isError && !isLoading && (
     <div class="container mx-auto px-4 pt-16 mb-16">
       <div class="popular-tv">
         <h2 class="uppercase tracking-wider text-orange-500 text-lg font-semibold">
           Recent Shows
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-          {tvList.map((show: any) => (
-            <TvShowCard show={show} />
-          ))}
-        </div>
-        {total_pages > 1 && (
-          <Pagination currentPage={pageValue} totalPages={total_pages} />
+        {tvList.length > 0 ? (
+          <>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+              {tvList.map((show: any) => (
+                <TvShowCard show={show} />
+              ))}
+            </div>
+            {total_pages > 1 && (
+              <Pagination currentPage={pageValue} totalPages={total_pages} />
+            )}
+          </>
+        ) : (
+          <div class="text-center py-16">
+            <h1 class="mb-3 text-8xl font-bold [font-size:_clamp(2.5em,8vw,7em)] [margin-bottom:_.5em]">
+              Oops!
+            </h1>
+            <hr class="mb-5 w-36 h-1 bg-teal border-0" />
+            <p class="mb-5 text-xl sm:text-3xl">
+              Sorry, there was an error loading this page.
+            </p>
+            <a
+              class="h-12 py-2 px-6 font-semibold rounded-md text-teal border-2 border-white"
+              href="javascript:window.location.reload(true)"
+            >
+              Retry
+            </a>
+          </div>
         )}
       </div>
     </div>

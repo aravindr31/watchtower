@@ -1,12 +1,22 @@
 import { ShowCollection } from "./db";
 
+const getShowCollection = async () => {
+  return await ShowCollection();
+};
+
 export const getAllShows = async () => {
-  const totalItems = await (await ShowCollection()).countDocuments();
-  const showData = await (await ShowCollection()).find({}).toArray();
-  return {
-    totalItems,
-    shows: showData,
-  };
+  try {
+    const collection = await getShowCollection();
+    const totalItems = await collection.countDocuments();
+    const showData = await collection.find({}).toArray();
+    return {
+      totalItems,
+      shows: showData,
+    };
+  } catch (err) {
+    console.log("Error Fetching all shows", err.message);
+    throw new Error("failed to fetch all shows");
+  }
 };
 
 export const createShow = async (newShow) => {
@@ -15,27 +25,32 @@ export const createShow = async (newShow) => {
     const result = await collection.insertOne(newShow);
     return result;
   } catch (error) {
-    console.error("Error creating movie:", error.message);
-    throw new Error("Failed to create movie.");
+    console.error("Error creating show:", error.message);
+    throw new Error("Failed to create show.");
   }
 };
 
 export const getPageWiseShows = async (page) => {
-  const pageSize = 20;
-  const skipCount = (page - 1) * pageSize;
+  try {
+    const pageSize = 20;
+    const skipCount = (page - 1) * pageSize;
+    const collection = await ShowCollection();
+    const totalItems = await collection.countDocuments();
 
-  const totalItems = await (await ShowCollection()).countDocuments();
+    const showData = await collection
+      .find({})
+      .sort({ _id: -1 })
+      .skip(skipCount)
+      .limit(pageSize)
+      .toArray();
 
-  const showData = await (await ShowCollection())
-    .find({})
-    .sort({ _id: -1 })
-    .skip(skipCount)
-    .limit(pageSize)
-    .toArray();
-
-  return {
-    totalItems,
-    totalPages: Math.ceil(totalItems / pageSize),
-    shows: showData,
-  };
+    return {
+      totalItems,
+      totalPages: Math.ceil(totalItems / pageSize),
+      shows: showData,
+    };
+  } catch (err) {
+    console.log("Error Fetching page-wise shows", err.message);
+    throw new Error("failed to fetch page-wise shows");
+  }
 };

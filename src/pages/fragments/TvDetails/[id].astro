@@ -2,23 +2,36 @@
 import { Image } from "astro:assets";
 import InternalError from "../../../components/InternalError.astro";
 import Modal from "../../../components/Modal.astro";
+import Loading from "../../../components/Loading.astro";
+
+interface Show {
+    name:string;
+    poster_path: string;
+    vote_average: number;
+    first_air_date: string;
+    genres: string;
+    created_by:{name:string}[];
+    cast:{id:number; profile_path:string; name:string; character:string}[];
+    images:{file_path:string}[];
+    videos:{results:{key:string}[]};
+}
+
 
 const { id } = Astro.params;
 const url = `${Astro.url.origin}/api/getsdetail.json?id=${id}`;
 
-let show = null;
+let show: Show | null = null;
 let isError = false;
+let isLoading = true
+let retries = 5
 let isOpen = false;
-try {
-  const data = await fetch(url).then(async (res) => {
-    if (res.ok) {
-      return await res.json();
-    } else {
-      throw new Error(
-        `Failed with status code ${res.status}: ${res.statusText}`
-      );
+const fetchShowDetails = async ()=>{
+    try {
+  const response = await fetch(url)
+  if (!response.ok) {
+        throw new Error(`Failed with status code ${response.status}: ${response.statusText}`)
     }
-  });
+  const data = await response.json()
 
   show = {
     ...data,
@@ -41,14 +54,24 @@ try {
     images: data.images.backdrops.slice(0, 9),
   };
 } catch (err) {
+    if (retries>0){
+        retries--;
+        console.log(`Retrying fetch.. Total retires left - ${retries}`);
+        await fetchShowDetails();
+    }else{
   console.log(err);
   isError = true;
+    }
+} finally{
+    isLoading = false
 }
+}
+await fetchShowDetails()
 ---
 
 {isError && <InternalError />}
-
-{ !isError && show && (
+{isLoading && <Loading />}
+{ !isError && !isLoading && show && (
     <div class="movie-info border-b border-gray-800">
         <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row">
             <div class="flex-none">

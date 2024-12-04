@@ -7,10 +7,23 @@ if (!MONGODB_URI) {
 
 const uri = MONGODB_URI;
 const options = {};
-const connectToDB = async () => {
-  const mongo = await new MongoClient(uri, options).connect();
+let client;
+let clientPromise;
 
-  return mongo.db("Watchlist");
+if (!globalThis._mongoClientPromise) {
+  client = new MongoClient(uri, options);
+  globalThis._mongoClientPromise = client.connect();
+}
+clientPromise = globalThis._mongoClientPromise;
+
+const connectToDB = async () => {
+  if (!clientPromise) {
+    client = new MongoClient(uri, options);
+    clientPromise = client.connect();
+    globalThis._mongoClientPromise = clientPromise;
+  }
+  const MongoClient = await clientPromise;
+  return MongoClient.db("Watchlist");
 };
 
 export const getDB = async () => {
