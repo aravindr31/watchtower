@@ -39,7 +39,7 @@ export const checkIfShowExists = async (idList) => {
 export const createShow = async (newShow) => {
   try {
     const collection = await ShowCollection();
-    const result = await collection.insertOne(newShow);
+    const result = await collection.insertMany(newShow);
     return result;
   } catch (error) {
     console.error("Error creating show:", error.message);

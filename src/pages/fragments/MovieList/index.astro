@@ -46,7 +46,7 @@ await fetchMovies();
     <div class="container mx-auto px-4 pt-16 mb-16">
       <div class="popular-movies">
         <h2 class="uppercase tracking-wider text-orange-500 text-lg font-semibold">
-          Recent Watches
+          Recent Movies
         </h2>
         {movieArray.length > 0 ? (
           <>
@@ -80,3 +80,6 @@ await fetchMovies();
     </div>
   )
 }
+<script>
+  let checkIfLoaded = isLoading || false;
+</script>
