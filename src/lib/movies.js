@@ -30,7 +30,7 @@ export const checkIfMovieExists = async (idList) => {
       throw new Error("idList is empty");
     }
   } catch (error) {
-    console.log("Error checking ids -", err.message);
+    console.log("Error checking ids -", error.message);
     throw new Error("Error checking ids");
   }
 };
@@ -38,7 +38,7 @@ export const checkIfMovieExists = async (idList) => {
 export const createMovie = async (newMovie) => {
   try {
     const collection = await getMovieCollection();
-    const result = await collection.insertOne(newMovie);
+    const result = await collection.insertMany(newMovie);
     return result;
   } catch (error) {
     console.error("Error creating movie:", error.message);
