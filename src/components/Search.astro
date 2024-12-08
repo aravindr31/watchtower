@@ -1,0 +1,42 @@
+---
+export const prerender = true;
+const params = Astro.url.searchParams.get("q") || "";
+---
+
+<div
+  class="mt-16 relative top-1/2 transform -translate-y-1/2 mx-auto w-[960px] h-[55px] flex flex-row"
+>
+  <form class="w-full flex flex-row">
+    <input
+      type="text"
+      name="search"
+      value={params}
+      placeholder="Search the Library"
+      autofocus
+      autocomplete="false"
+      class="w-full pl-[30px] pr-[20px] py-[20px] h-[55px] bg-[#241f20] bg-no-repeat bg-left border-none text-white transition-all duration-500 ease-in-out focus:outline-none focus:bg-[#241f20] focus:bg-no-repeat focus:bg-right-[580px]"
+    />
+    <div
+      class="w-fit bg-red-600 float-left h-[55px] flex items-center justify-center transition-all duration-300 ease-in-out hover:bg-red-500"
+    >
+      <input
+        value="Search"
+        type="submit"
+        class="mx-4 text-white uppercase text-[15px] text-center font-medium tracking-[2px] transition-all duration-300 ease-in-out hover:tracking-[2.5px]"
+      />
+    </div>
+  </form>
+</div>
+<script>
+  import DOMPurify from "dompurify";
+  const form = document.querySelector("form");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const searchQuery = DOMPurify.sanitize(formData.get("search")?.toString());
+    if (!searchQuery || searchQuery?.length == 0) return;
+    const url = new URL("/search", window.location.origin);
+    url.searchParams.set("q", searchQuery);
+    window.location.assign(url.toString());
+  });
+</script>

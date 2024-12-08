@@ -102,8 +102,6 @@ function handleMovieToHomeTransition(navigateEvent, movieId) {
       const moviePoster = document.getElementById(`movie-poster`);
       let thumbnail;
 
-      // If the movie poster is not in the home page, removes the transition style so that
-      // the poster doesn't stay on the page while transitioning
       tempHomePage.innerHTML = data;
       if (!tempHomePage.querySelector(`#movie-poster-${movieId}`)) {
         moviePoster?.classList.remove("movie-poster");

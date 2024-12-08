@@ -11,6 +11,14 @@ export function getNavigationType(fromPath, toPath) {
     return "home-to-movie";
   }
 
+  // if (fromPath === "/" && toPath.startsWith("/tv")) {
+  //   return "home-to-movie";
+  // }
+
+  // if (fromPath === "/" && toPath.startsWith("/search")) {
+  //   return "home-to-movie";
+  // }
+
   if (fromPath.startsWith("/tv/") && toPath === "/tv") {
     return "show-to-tv";
   }

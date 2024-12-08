@@ -152,10 +152,11 @@ export const prerender = true;
     <circle cx="310.82" cy="220.54" r="1.86" style="fill:#1c3a4b"></circle>
   </svg>
 </div>
-<div class="error-msg-container my-auto my-auto max-w-full text-center">
+<div class="error-msg-container my-auto max-w-full text-center">
   <h2 class="text-2xl my-2">Looks like something went wrong!</h2>
   <p>We are activily working on it...</p>
   <a href="/">Go back Home</a>
+  <a href="javascript:window.location.reload(true)">Reload</a>
 </div>
 
 <style>
@@ -180,12 +181,6 @@ export const prerender = true;
     margin: 2rem auto 0;
   }
 
-  /* .error-msg-container {
-    margin: 30px auto 40px auto;
-    max-width: 800px;
-    width: 80%;
-    text-align: center;
-  } */
   h2 {
     size: 20px;
   }
