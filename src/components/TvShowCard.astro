@@ -1,10 +1,13 @@
 ---
+import { Image } from "astro:assets";
+
 const { show } = Astro.props;
 ---
 
 <div class="mt-8">
   <a href={`/tv/${show.id}`}>
-    <img
+    <Image
+      inferSize={true}
       src={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
       alt={`${show.name} Poster`}
       class="thumbnail hover:opacity-75 transition ease-in-out duration-150"
@@ -23,7 +26,7 @@ const { show } = Astro.props;
             data-name="star"></path></g
         ></svg
       >
-      <span class="ml-1">{parseFloat(show.vote_average.toFixed(1))}</span>
+      <span class="ml-1">{parseFloat(show.vote_average?.toFixed(1))}</span>
       <span class="mx-2">|</span>
       <span>{show.first_air_date}</span>
     </div>

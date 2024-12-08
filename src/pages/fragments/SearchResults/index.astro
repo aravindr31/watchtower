@@ -1,0 +1,91 @@
+---
+import InternalError from "../../../components/InternalError.astro";
+import Loading from "../../../components/Loading.astro";
+import MovieCard from "../../../components/MovieCard.astro";
+import TvShowCard from "../../../components/TvShowCard.astro";
+import Pagination from "../../../components/Pagination.astro";
+
+const pageValue = Astro.url.searchParams.get("page") || 1;
+const searchQuery = Astro.url.searchParams.get("q") || "";
+
+let isError = false;
+let isLoading = true;
+let total_pages = 1;
+let dataArray: any[] = [];
+let retries = 5;
+
+const fetchSearch = async () => {
+  try {
+    const response = await fetch(
+      `${Astro.url.origin}/api/getsearchresult.json?query=${searchQuery}&page=${pageValue}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!response.ok) throw new Error(`API Fetch failed ${response.status}`);
+    const parsedRes = await response.json();
+    total_pages = parsedRes?.total_pages;
+    dataArray = parsedRes?.results;
+  } catch (error) {
+    if (retries > 0) {
+      retries--;
+      console.log(`Retrying fetch.. Total retires left - ${retries}`);
+      await fetchSearch();
+    } else {
+      isError = true;
+      console.error(error);
+    }
+  } finally {
+    isLoading = false;
+  }
+};
+await fetchSearch();
+---
+
+{isError && <InternalError />}
+{isLoading && <Loading />}
+{
+  !isError && !isLoading && (
+    <div class="container mx-auto px-4 pt-16 mb-16">
+      <div class="popular-movies">
+        <h2 class="uppercase tracking-wider text-orange-500 text-lg font-semibold">
+          Search Results
+        </h2>
+        {dataArray.length > 0 ? (
+          <>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+              {dataArray?.map((item: any) => {
+                if (item?.media_type == "movie" && item?.poster_path != null) {
+                  return <MovieCard movie={item} />;
+                } else if (
+                  item?.media_type == "tv" &&
+                  item?.poster_path != null
+                ) {
+                  return <TvShowCard show={item} />;
+                }
+              })}
+            </div>
+            {total_pages > 1 && (
+              <Pagination currentPage={pageValue} totalPages={total_pages} />
+            )}
+          </>
+        ) : (
+          <div class="text-center py-16">
+            <h1 class="mb-3 text-8xl font-bold ">Oops!</h1>
+            <hr class="mb-5 w-36 h-1 bg-teal border-0" />
+            <p class="mb-5 text-xl sm:text-3xl">
+              Sorry, there was an error loading this page.
+            </p>
+            <a
+              class="h-12 py-2 px-6 font-semibold rounded-md text-teal border-2 border-white"
+              href="javascript:window.location.reload(true)"
+            >
+              Retry
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
