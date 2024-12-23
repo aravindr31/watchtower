@@ -61,3 +61,6 @@
     contain: paint;
   }
   
+  *{
+    font-family: sans-serif,system-ui, ui-sans-serif, 'Segoe UI', Tahoma, Geneva, Verdana;
+  }

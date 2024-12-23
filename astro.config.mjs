@@ -11,6 +11,7 @@ export default defineConfig({
   output: "server",
   adapter: vercel(),
   experimental: {
+    serverIslands: true,
     env: {
       schema: {
         API_KEY: envField.string({

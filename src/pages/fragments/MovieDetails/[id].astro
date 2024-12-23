@@ -1,10 +1,12 @@
 ---
 import { Image } from 'astro:assets';
-import Modal from '../../../components/Modal.astro';
 import InternalError from '../../../components/InternalError.astro';
 import Loading from '../../../components/Loading.astro';
-
+import WatchListBtn from '../../../components/WatchListBtn.astro';
+import Caurosel from '../../../components/Caurosel.astro';
+import Recommendations from '../../../components/Recommendations.astro';
 interface Movie {
+    id: number;
     title:string;
     poster_path: string;
     vote_average: number;
@@ -36,7 +38,7 @@ movie = {
     ...data,
     poster_path: data?.poster_path
         ? 'https://image.tmdb.org/t/p/w500/' + data?.poster_path
-        : 'https://via.placeholder.com/500x750',
+        : 'https://placehold.co/500x750?text=:(',
     vote_average: (data?.vote_average),
     release_date: new Date(data?.release_date).toLocaleDateString('en-us', {
         year: 'numeric',
@@ -49,7 +51,7 @@ movie = {
         ...c,
         profile_path: c.profile_path
             ? 'https://image.tmdb.org/t/p/w300/' + c.profile_path
-            : 'https://via.placeholder.com/300x450'
+            : 'https://placehold.co/300x450?text=:('
     })),
     images: data?.images.backdrops.slice(0, 9),
 }
@@ -77,6 +79,13 @@ await fetchMovieDetails()
         <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row">
             <div class="flex-none">
                 <Image inferSize={true} src={movie.poster_path} alt={`${movie.title} Poster`} class="movie-poster w-64 lg:w-96" id="movie-poster" />
+                <WatchListBtn media_type="movie" id={movie.id} server:defer>
+                <div class="flex w-full">
+                    <div slot="fallback" class="mx-auto mt-2 justify-center items-center">
+                        <svg class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#DC3636" stroke-width="13" stroke-linecap="round" stroke-dasharray="300 385" stroke-dashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="1" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
+                    </div>
+                </div>
+                </WatchListBtn>
             </div>
             <div class="md:ml-24">
                 <h2 class="text-4xl mt-4 md:mt-0 mb-2 font-semibold">{movie.title}</h2>
@@ -104,28 +113,26 @@ await fetchMovieDetails()
                         ))}
                     </div>
                 </div>
-
-                <div x-data="{ isOpen: false }">
-                    {movie.videos.results.length && (
-                        <div class="mt-12">
-                            <button
-                                @click="isOpen = true"
-                                class="flex items-center bg-orange-500 text-gray-900 rounded font-semibold px-5 py-4 hover:bg-orange-600 transition ease-in-out duration-150"
-                            >
-                                <svg class="w-6 fill-current" viewBox="0 0 24 24">
-                                    <path d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                                </svg>
-                                <span class="ml-2">Play Trailer</span>
-                            </button>
-                        </div>
-
-                        <Modal open="isOpen" close="isOpen = false">
-                            <div class="responsive-container overflow-hidden relative" style="padding-top: 56.25%">
-                                <iframe class="responsive-iframe absolute top-0 left-0 w-full h-full" src={`https://www.youtube.com/embed/${movie.videos.results[0].key}`} style="border:0;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div class="flex flex-row">
+                    <div>
+                        {movie.videos.results.length && (
+                            <div class="mt-12">
+                                <a
+                                    class="flex items-center bg-[#dc3636] text-white rounded font-semibold px-5 py-4 hover:bg-[#f33e3e] transition ease-in-out duration-150"
+                                    target="_blank"
+                                    href={`https://www.youtube.com/embed/${movie.videos.results[0].key}`}
+                                >
+                                    <svg class="w-6 fill-current" viewBox="0 0 24 24">
+                                        <path d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                                    </svg>
+                                    <span class="ml-2">Play Trailer</span>
+                                </a>
                             </div>
-                        </Modal>
-                    )}
+                        )}
+                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -150,27 +157,23 @@ await fetchMovieDetails()
         </div>
     </div>
 </div> 
-<div class="movie-images" x-data="{ isOpen: false, image: ''}">
+<div class="movie-images">
     <div class="container mx-auto px-4 py-16">
         <h2 class="text-4xl font-semibold">Images</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {movie.images.map((image: { file_path: any; }) => (
-            <div class="mt-8">
-                    <a
-                    @click.prevent={`
-                            isOpen = true
-                            image='https://image.tmdb.org/t/p/original/${image.file_path}'
-                        `}
-                    >
-                        <Image inferSize={true} src={`https://image.tmdb.org/t/p/w500${image.file_path}`} loading="lazy" alt={movie.title} class="hover:opacity-75 transition ease-in-out duration-150"/>
-                    </a>
+        <Caurosel images={movie?.images} title={movie?.title} server:defer>
+            <div class="flex w-full mx-auto mt-8">
+                <div slot="fallback" class="mx-auto justify-center items-center">
+                    <svg class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#DC3636" stroke-width="13" stroke-linecap="round" stroke-dasharray="300 385" stroke-dashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="1" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
                 </div>
-        ))}
-        </div>
-
-        <Modal open="isOpen" close="isOpen = false">
-            <img :src="image" alt="poster">
-        </Modal>
+            </div>
+        </Caurosel>
     </div>
 </div>
+<Recommendations id={movie.id} media="movie">
+    <div class="flex w-full mx-auto mt-8">
+        <div slot="fallback" class="mx-auto justify-center items-center">
+            <svg class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#DC3636" stroke-width="13" stroke-linecap="round" stroke-dasharray="300 385" stroke-dashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="1" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
+        </div>
+    </div>
+</Recommendations>
 )}

@@ -11,7 +11,7 @@ export const getAllShows = async () => {
     return totalItems;
   } catch (err) {
     console.log("Error Fetching all shows", err.message);
-    throw new Error("failed to fetch all shows");
+    // throw new Error("failed to fetch all shows");
   }
 };
 
@@ -32,7 +32,7 @@ export const checkIfShowExists = async (idList) => {
     }
   } catch (error) {
     console.log("Error checking ids -", err.message);
-    throw new Error("Error checking ids");
+    // throw new Error("Error checking ids");
   }
 };
 
@@ -43,7 +43,7 @@ export const createShow = async (newShow) => {
     return result;
   } catch (error) {
     console.error("Error creating show:", error.message);
-    throw new Error("Failed to create show.");
+    // throw new Error("Failed to create show.");
   }
 };
 
@@ -68,6 +68,6 @@ export const getPageWiseShows = async (page) => {
     };
   } catch (err) {
     console.log("Error Fetching page-wise shows", err.message);
-    throw new Error("failed to fetch page-wise shows");
+    // throw new Error("failed to fetch page-wise shows");
   }
 };

@@ -67,7 +67,7 @@ const fetchPersonDetails = async () => {
               : "https://via.placeholder.com/185x278",
             linkToPage:
               movie.media_type === "movie"
-                ? `/movies/${movie.id}`
+                ? `/movie/${movie.id}`
                 : `/tv/${movie.id}`,
           };
         }
@@ -94,7 +94,7 @@ const fetchPersonDetails = async () => {
             release_year: release_date ? release_date.split("-")[0] : "Future",
             linkToPage:
               movie.media_type === "movie"
-                ? `/movies/${movie.id}`
+                ? `/movie/${movie.id}`
                 : `/tv/${movie.id}`,
           };
         }
