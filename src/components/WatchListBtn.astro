@@ -1,0 +1,127 @@
+---
+const { media_type, id } = Astro.props;
+const url = `${Astro.url.origin}/api/checkids.json?checkon=${media_type}`;
+let isAvaliable: boolean = true;
+let isError = false;
+let retires = 5;
+
+const checkState = async () => {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify([parseInt(id)]),
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Failed with status code ${response.status}: ${response.statusText}`
+      );
+    }
+    const data = await response.json();
+    if (data[0] == id) isAvaliable = false;
+  } catch (err) {
+    if (retires > 0) {
+      retires--;
+      console.log(`Retrying fetch.. Total retires left - ${retires}`);
+      await checkState();
+    } else {
+      console.log(err);
+      isError = true;
+    }
+  }
+};
+await checkState();
+---
+
+{
+  !isError ? (
+    <div class=" flex w-full mt-2 rounded-sm">
+      <div class="justify-center mx-auto items-center w-full rounded-sm">
+        <button
+          type="submit"
+          id="watchlistBtn"
+          disabled={isAvaliable}
+          class="flex justify-center items-center w-full bg-[#dc3636] text-white rounded font-semibold px-5 py-4 hover:bg-[#f33e3e] transition ease-in-out duration-150"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            class="w-6 fill-current"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <>
+              <g id="SVGRepo_bgCarrier" stroke-width="0" />
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <g id="SVGRepo_iconCarrier">
+                {" "}
+                <path
+                  d="M7.5 3C6.67157 3 6 3.67157 6 4.5V20.1193C6 21.4009 7.50318 22.0922 8.47619 21.2582L11.5119 18.6562C11.7928 18.4154 12.2072 18.4154 12.4881 18.6562L15.5238 21.2582C16.4968 22.0922 18 21.4009 18 20.1193V4.5C18 3.67157 17.3284 3 16.5 3H7.5Z"
+                  fill="#fff"
+                />{" "}
+              </g>
+            </>
+          </svg>
+          <span class="ml-2 text-white uppercase text-[15px] text-center font-medium tracking-[2px] transition-all duration-300 ease-in-out hover:tracking-[2.5px]">
+            {!isAvaliable ? "Mark as Watched" : "Watched"}
+          </span>
+        </button>
+      </div>
+    </div>
+  ) : (
+    ""
+  )
+}
+<script>
+  document.addEventListener("astro:page-load", async () => {
+    const button = document.getElementById("watchlistBtn");
+    const buttonSpan = button?.querySelector("span");
+    const url = window.location.pathname;
+
+    const getCookie = (cookieName: string) => {
+      const value = `${document.cookie}`;
+      const parts = value.split(`${cookieName}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    };
+
+    const handleButtonClick = async () => {
+      console.log("Marking...");
+      if (buttonSpan) buttonSpan.textContent = "Marking...";
+      const data = url.split("/");
+      try {
+        const response = await fetch(
+          `${window.location.origin}/api/markaswatched`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${getCookie("access-token")}`,
+            },
+            body: JSON.stringify({
+              media: data[1],
+              id: data[2],
+            }),
+          }
+        );
+        if (!response.ok) {
+          console.error(`Error: ${response.statusText}`);
+          window.location.assign(
+            new URL("/authorize", window.location.origin).toString()
+          );
+        } else {
+          if (buttonSpan) buttonSpan.textContent = "Watched";
+        }
+      } catch (error) {
+        console.error("Request failed", error);
+      }
+    };
+
+    if (button) {
+      button.addEventListener("click", handleButtonClick);
+    }
+  });
+</script>

@@ -1,6 +1,14 @@
 import { createMovie, getAllMovies } from "../../lib/movies";
 import { createShow, getAllShows } from "../../lib/shows";
 
+export const addToDB = async (selector, data) => {
+  return selector === "movie"
+    ? await createMovie(data)
+    : selector === "tv"
+    ? await createShow(data)
+    : null;
+};
+
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const page = reqUrl.searchParams.get("page") || 1;
@@ -27,12 +35,7 @@ export const POST = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const selector = reqUrl.searchParams.get("insert") || 1;
   const data = await request.json();
-  const dataAdded =
-    selector === "movie"
-      ? await createMovie(data)
-      : selector === "show"
-      ? await createShow(data)
-      : null;
+  const dataAdded = await addToDB(selector, data);
   return new Response(JSON.stringify(dataAdded), {
     status: 200,
   });

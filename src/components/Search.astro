@@ -4,7 +4,7 @@ const params = Astro.url.searchParams.get("q") || "";
 ---
 
 <div
-  class="mt-16 relative top-1/2 transform -translate-y-1/2 mx-auto w-[960px] h-[55px] flex flex-row"
+  class="mt-16 rounded-sm relative top-1/2 transform -translate-y-1/2 mx-auto w-[960px] h-[55px] flex flex-row"
 >
   <form class="w-full flex flex-row">
     <input
@@ -28,15 +28,18 @@ const params = Astro.url.searchParams.get("q") || "";
   </form>
 </div>
 <script>
-  import DOMPurify from "dompurify";
-  const form = document.querySelector("form");
-  form?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const searchQuery = DOMPurify.sanitize(formData.get("search")?.toString());
-    if (!searchQuery || searchQuery?.length == 0) return;
-    const url = new URL("/search", window.location.origin);
-    url.searchParams.set("q", searchQuery);
-    window.location.assign(url.toString());
+  document.addEventListener("astro:page-load", () => {
+    const form = document.querySelector("form");
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      console.log(formData);
+      const searchQuery = formData.get("search")?.toString();
+      if (!searchQuery || searchQuery?.length == 0) return;
+      const url = new URL("/search", window.location.origin);
+      url.searchParams.set("q", searchQuery);
+      console.log(url.toString());
+      window.location.assign(url.toString());
+    });
   });
 </script>

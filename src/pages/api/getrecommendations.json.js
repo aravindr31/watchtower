@@ -2,10 +2,10 @@ import { TMDB_BASEURL, TMDB_HEADER, accountId } from "../../lib/commonExports";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
-  const pageValue = reqUrl.searchParams.get("page") || 1;
-  const query = reqUrl.searchParams.get("query") || "";
+  const id = reqUrl.searchParams.get("id") || 1;
+  const media_type = reqUrl.searchParams.get("media") || "";
 
-  const url = `${TMDB_BASEURL}/search/multi?query=${query}&include_adult=false&language=en-US&page=${pageValue}`;
+  const url = `${TMDB_BASEURL}/${media_type}/${id}/recommendations?language=en-US&page=1`;
   try {
     const response = await fetch(url, TMDB_HEADER);
     if (!response.ok) {

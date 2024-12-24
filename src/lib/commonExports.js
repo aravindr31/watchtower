@@ -5,6 +5,7 @@ export const TMDB_BASEURL = "https://api.themoviedb.org/3";
 export const TMDB_HEADER = {
   headers: {
     accept: "application/json",
+    "content-type": "application/json",
     Authorization: `Bearer ${ACCESS_TOKEN}`,
   },
 };

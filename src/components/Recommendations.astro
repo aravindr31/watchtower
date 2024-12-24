@@ -1,0 +1,78 @@
+---
+import Caurosel from "./Caurosel.astro";
+import MovieCard from "./MovieCard.astro";
+import TvShowCard from "./TvShowCard.astro";
+
+const { id, media } = Astro.props;
+const url = `${Astro.url.origin}/api/getrecommendations.json?id=${id}&media=${media}`;
+
+let dataArray: any[] = [];
+let isError = false;
+let isLoading = true;
+let retries = 5;
+
+const fetchRecommendations = async () => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(
+        `Failed with status code ${response.status}: ${response.statusText}`
+      );
+    }
+    const parsedRes = await response.json();
+    dataArray = parsedRes?.results;
+  } catch (err) {
+    if (retries > 0) {
+      retries--;
+      console.log(`Retrying fetch.. Total retires left - ${retries}`);
+      await fetchRecommendations();
+    } else {
+      console.log(err);
+      isError = true;
+    }
+  } finally {
+    isLoading = false;
+  }
+};
+await fetchRecommendations();
+---
+{!isError &&
+(<div class="movie-rec">
+  <div class="container mx-auto px-4 py-16">
+    <h2 class="text-4xl font-semibold">Recommendations</h2>
+    {
+      dataArray.length > 0 && (
+        // <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div class="flex flex-row mx-4 overflow-x-auto scrollbar-hide">
+          {dataArray?.map((item: any) => {
+            if (item?.media_type == "movie" && item?.poster_path != null) {
+              return (
+                <div class="w-[150px] flex-shrink-0">
+                  <MovieCard movie={item} recommend={true} />
+                </div>
+              );
+            } else if (item?.media_type == "tv" && item?.poster_path != null) {
+              return (
+                <div class="w-[150px] flex-shrink-0">
+                  <TvShowCard show={item} recommend={true} />
+                </div>
+              );
+            }
+          })}
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+)}

@@ -1,0 +1,175 @@
+<div class="max-w-sm mx-auto md:max-w-lg pt-20 px-3">
+  <div class="w-full">
+    <div class="h-64 py-3 rounded text-center">
+      <h1 class="text-xl uppercase">Authenticate with Passcode</h1>
+      <form id="otp-form">
+        <div
+          id="passkey"
+          class="flex flex-row justify-center text-center px-2 mt-5"
+        >
+          <input
+            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            type="text"
+            id="first"
+            maxlength="1"
+            autofocus
+          />
+          <input
+            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            type="text"
+            id="second"
+            maxlength="1"
+          />
+          <input
+            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            type="text"
+            id="third"
+            maxlength="1"
+          />
+          <input
+            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            type="text"
+            id="fourth"
+            maxlength="1"
+          />
+          <input
+            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            type="text"
+            id="fifth"
+            maxlength="1"
+          />
+          <input
+            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            type="text"
+            id="sixth"
+            maxlength="1"
+          />
+        </div>
+        <div
+          class="my-4 w-full h-10 bg-red-600 float-left flex items-center justify-center transition-all duration-300 ease-in-out hover:bg-red-500"
+        >
+          <input
+            value="Get Token"
+            type="submit"
+            class="mx-2 text-white uppercase text-[15px] text-center font-medium tracking-[2px] transition-all duration-300 ease-in-out hover:tracking-[2.5px]"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const inputs = document.querySelectorAll("#passkey > input");
+    const removeInputValue = () => {
+      inputs.forEach((input, index) => {
+        input.value = "";
+      });
+    };
+
+    const handleInputEvent = (event, input, index) => {
+      const value = event.target.value;
+
+      if (!/^\d$/.test(value)) {
+        input.value = "";
+        return;
+      }
+
+      if (index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    };
+
+    const handleKeydownEvent = (event, input, index) => {
+      if (event.key === "Backspace") {
+        input.value = "";
+        if (index > 0) inputs[index - 1].focus();
+      }
+    };
+
+    const setupInputEventListeners = (input, index) => {
+      input.addEventListener("input", (event) =>
+        handleInputEvent(event, input, index)
+      );
+      input.addEventListener("keydown", (event) =>
+        handleKeydownEvent(event, input, index)
+      );
+    };
+
+    const setupOTPInput = () => {
+      inputs.forEach((input, index) => {
+        setupInputEventListeners(input, index);
+      });
+    };
+
+    const getFinalToken = () => {
+      return Array.from(inputs)
+        .map((input) => input.value)
+        .join("");
+    };
+
+    const authenticate = async (token: string) => {
+      const url = new URL("/api/auth", window.location.origin);
+      return await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          token: token,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }).then(async (res) => {
+        return await res.json();
+      });
+    };
+
+    const form = document.querySelector("#otp-form");
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const token = getFinalToken();
+      const auth = await authenticate(token);
+      if (auth.valid) {
+        window.history.go(-1);
+      } else {
+        console.log(auth.message);
+        removeInputValue();
+      }
+    });
+
+    setupOTPInput();
+  });
+</script>
+<script>
+  document.addEventListener("astro:after-swap", () => {
+    const inputs = document.querySelectorAll("#passkey > input");
+
+    const removeInputEventListeners = (input, index) => {
+      input.removeEventListener("input", handleInputEvent);
+      input.removeEventListener("keydown", handleKeydownEvent);
+    };
+
+    const handleInputEvent = (event) => {
+      const value = event.target.value;
+      if (!/^\d$/.test(value)) {
+        event.target.value = "";
+        return;
+      }
+      if (index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    };
+
+    const handleKeydownEvent = (event) => {
+      if (event.key === "Backspace") {
+        event.target.value = "";
+        if (index > 0) inputs[index - 1].focus();
+      }
+    };
+
+    inputs.forEach((input, index) => {
+      removeInputEventListeners(input, index);
+    });
+  });
+</script>

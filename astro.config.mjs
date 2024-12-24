@@ -11,6 +11,7 @@ export default defineConfig({
   output: "server",
   adapter: vercel(),
   experimental: {
+    serverIslands: true,
     env: {
       schema: {
         API_KEY: envField.string({
@@ -25,6 +26,13 @@ export default defineConfig({
         MONGODB_URI: envField.string({ context: "server", access: "secret" }),
         ACCESS_TOKEN: envField.string({ context: "server", access: "secret" }),
         ACCOUNT_ID: envField.string({ context: "server", access: "secret" }),
+        JWT_ISSUER: envField.string({ context: "server", access: "secret" }),
+        JWT_AUDIENCE: envField.string({ context: "server", access: "secret" }),
+        JWT_EXPIRATION_TIME: envField.string({
+          context: "server",
+          access: "public",
+          default: "10m",
+        }),
       },
     },
   },

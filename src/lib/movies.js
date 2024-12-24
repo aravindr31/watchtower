@@ -25,6 +25,7 @@ export const checkIfMovieExists = async (idList) => {
         .toArray();
       const existingIds = matchingMovies.map((item) => item.id);
       const newIds = idList.filter((id) => !existingIds.includes(id));
+      // console.log(`newIds - ${newIds.length}`);
       return newIds;
     } else {
       throw new Error("idList is empty");
@@ -59,7 +60,6 @@ export const getPageWiseMovies = async (page) => {
       .skip(skipCount)
       .limit(pageSize)
       .toArray();
-
     return {
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
@@ -67,6 +67,5 @@ export const getPageWiseMovies = async (page) => {
     };
   } catch (err) {
     console.log("Error Fetching page-wise movies", err.message);
-    throw new Error("failed to fetch page-wise movies");
   }
 };
