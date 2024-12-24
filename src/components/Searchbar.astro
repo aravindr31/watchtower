@@ -4,7 +4,7 @@ const param = Astro.url.searchParams.get("q");
 ---
 
 <div
-  class="flex rounded-sm shadow-cool-grey-400 shaow-xl overflow-hidden max-w-lg ml-auto font-[sans-serif]"
+  class="flex rounded-sm shadow-cool-grey-400 shaow-xl overflow-hidden max-w-lg ml-auto font-[sans-serif] mx-4"
 >
   <form class="flex flex-row">
     <input
@@ -27,14 +27,17 @@ const param = Astro.url.searchParams.get("q");
   </form>
 </div>
 <script>
-  const form = document.querySelector("form");
-  form?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const searchQuery = formData.get("search")?.toString();
-    if (!searchQuery || searchQuery?.length == 0) return;
-    const url = new URL("/search", window.location.origin);
-    url.searchParams.set("q", searchQuery);
-    window.location.assign(url.toString());
+  document.addEventListener("astro:page-load", () => {
+    const form = document.querySelector("form");
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const searchQuery = formData.get("search")?.toString();
+      if (!searchQuery || searchQuery?.length == 0) return;
+      const url = new URL("/search", window.location.origin);
+      console.log(url);
+      url.searchParams.set("q", searchQuery);
+      window.location.assign(url.toString());
+    });
   });
 </script>

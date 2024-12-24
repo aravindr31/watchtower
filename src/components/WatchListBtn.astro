@@ -1,5 +1,4 @@
 ---
-// const { id } = Astro.params;
 const { media_type, id } = Astro.props;
 const url = `${Astro.url.origin}/api/checkids.json?checkon=${media_type}`;
 let isAvaliable: boolean = true;
@@ -38,8 +37,10 @@ await checkState();
     <div class=" flex w-full mt-2 rounded-sm">
       <div class="justify-center mx-auto items-center w-full rounded-sm">
         <button
-          class="flex justify-center items-center w-full bg-[#dc3636] text-white rounded font-semibold px-5 py-4 hover:bg-[#f33e3e] transition ease-in-out duration-150"
+          type="submit"
+          id="watchlistBtn"
           disabled={isAvaliable}
+          class="flex justify-center items-center w-full bg-[#dc3636] text-white rounded font-semibold px-5 py-4 hover:bg-[#f33e3e] transition ease-in-out duration-150"
         >
           <svg
             viewBox="0 0 24 24"
@@ -73,3 +74,54 @@ await checkState();
     ""
   )
 }
+<script>
+  document.addEventListener("astro:page-load", async () => {
+    const button = document.getElementById("watchlistBtn");
+    const buttonSpan = button?.querySelector("span");
+    const url = window.location.pathname;
+
+    const getCookie = (cookieName: string) => {
+      const value = `${document.cookie}`;
+      const parts = value.split(`${cookieName}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    };
+
+    const handleButtonClick = async () => {
+      console.log("Marking...");
+      if (buttonSpan) buttonSpan.textContent = "Marking...";
+      const data = url.split("/");
+      try {
+        const response = await fetch(
+          `${window.location.origin}/api/markaswatched`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${getCookie("access-token")}`,
+            },
+            body: JSON.stringify({
+              media: data[1],
+              id: data[2],
+            }),
+          }
+        );
+        if (!response.ok) {
+          console.error(`Error: ${response.statusText}`);
+          window.location.assign(
+            new URL("/authorize", window.location.origin).toString()
+          );
+        } else {
+          if (buttonSpan) buttonSpan.textContent = "Watched";
+        }
+      } catch (error) {
+        console.error("Request failed", error);
+      }
+    };
+
+    if (button) {
+      button.addEventListener("click", handleButtonClick);
+    }
+  });
+</script>

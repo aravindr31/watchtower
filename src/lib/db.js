@@ -40,3 +40,8 @@ export const ShowCollection = async () => {
   const db = await getDB();
   return db.collection("showvault");
 };
+
+export const AuthCollection = async () => {
+  const db = await getDB();
+  return db.collection("authdata");
+};

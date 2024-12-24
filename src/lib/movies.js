@@ -25,6 +25,7 @@ export const checkIfMovieExists = async (idList) => {
         .toArray();
       const existingIds = matchingMovies.map((item) => item.id);
       const newIds = idList.filter((id) => !existingIds.includes(id));
+      // console.log(`newIds - ${newIds.length}`);
       return newIds;
     } else {
       throw new Error("idList is empty");

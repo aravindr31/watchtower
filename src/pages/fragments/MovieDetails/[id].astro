@@ -79,7 +79,7 @@ await fetchMovieDetails()
         <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row">
             <div class="flex-none">
                 <Image inferSize={true} src={movie.poster_path} alt={`${movie.title} Poster`} class="movie-poster w-64 lg:w-96" id="movie-poster" />
-                <WatchListBtn media_type="movie" id={movie.id} server:defer>
+                <WatchListBtn media_type="movie" id={movie.id}>
                 <div class="flex w-full">
                     <div slot="fallback" class="mx-auto mt-2 justify-center items-center">
                         <svg class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#DC3636" stroke-width="13" stroke-linecap="round" stroke-dasharray="300 385" stroke-dashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="1" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
@@ -105,7 +105,7 @@ await fetchMovieDetails()
                 <div class="mt-12">
                     <h4 class="text-white font-semibold">Featured Crew</h4>
                     <div class="flex mt-4">
-                        {movie.crew.map((crew: { name: string; job: string }) => (
+                        {movie?.crew.map((crew: { name: string; job: string }) => (
                             <div class="mr-8">
                                 <div>{crew.name}</div>
                                 <div class="text-gray-400 text-sm">{crew.job}</div>
@@ -157,23 +157,22 @@ await fetchMovieDetails()
         </div>
     </div>
 </div> 
-<div class="movie-images">
-    <div class="container mx-auto px-4 py-16">
-        <h2 class="text-4xl font-semibold">Images</h2>
-        <Caurosel images={movie?.images} title={movie?.title} server:defer>
-            <div class="flex w-full mx-auto mt-8">
-                <div slot="fallback" class="mx-auto justify-center items-center">
-                    <svg class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#DC3636" stroke-width="13" stroke-linecap="round" stroke-dasharray="300 385" stroke-dashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="1" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
-                </div>
+<div class="border-b border-gray-800">
+    <Caurosel images={movie?.images} title={movie?.title} server:defer>
+        <div class="flex w-full mx-auto mt-8">
+            <div slot="fallback" class="mx-auto justify-center items-center">
+                <svg class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#DC3636" stroke-width="13" stroke-linecap="round" stroke-dasharray="300 385" stroke-dashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="1" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
             </div>
-        </Caurosel>
-    </div>
+        </div>
+    </Caurosel>
 </div>
-<Recommendations id={movie.id} media="movie">
+<div> 
+<Recommendations id={movie.id} media="movie" server:defer>
     <div class="flex w-full mx-auto mt-8">
         <div slot="fallback" class="mx-auto justify-center items-center">
             <svg class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#DC3636" stroke-width="13" stroke-linecap="round" stroke-dasharray="300 385" stroke-dashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="1" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
         </div>
     </div>
 </Recommendations>
+</div>
 )}

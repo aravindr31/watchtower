@@ -35,11 +35,9 @@ const fetchRecommendations = async () => {
   }
 };
 await fetchRecommendations();
-
-// console.dir(dataArray, { depth: Infinity });
 ---
-
-<div class="movie-rec">
+{!isError &&
+(<div class="movie-rec">
   <div class="container mx-auto px-4 py-16">
     <h2 class="text-4xl font-semibold">Recommendations</h2>
     {
@@ -77,3 +75,4 @@ await fetchRecommendations();
     scrollbar-width: none;
   }
 </style>
+)}
