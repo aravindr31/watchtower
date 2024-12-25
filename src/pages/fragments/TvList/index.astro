@@ -45,12 +45,12 @@ await fetchShows();
   !isError && !isLoading && (
     <div class="container mx-auto px-4 pt-16 mb-16">
       <div class="popular-tv">
-        <h2 class="uppercase tracking-wider text-orange-500 text-lg font-semibold">
+        <h2 class="uppercase tracking-wider text-red-500 text-lg font-semibold">
           Recent Shows
         </h2>
         {tvList.length > 0 ? (
           <>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
               {tvList.map((show: any) => (
                 <TvShowCard show={show} />
               ))}

@@ -4,9 +4,9 @@ const params = Astro.url.searchParams.get("q") || "";
 ---
 
 <div
-  class="mt-16 rounded-sm relative top-1/2 transform -translate-y-1/2 mx-auto w-[960px] h-[55px] flex flex-row"
+  class="mt-16 rounded-sm relative top-1/2 transform -translate-y-1/2 mx-auto w-auto h-auto lg:w-[1026px] lg:h-[55px] flex flex-row"
 >
-  <form class="w-full flex flex-row">
+  <form class="w-full px-4 sm:px-20 flex flex-row">
     <input
       type="text"
       name="search"
@@ -14,10 +14,10 @@ const params = Astro.url.searchParams.get("q") || "";
       placeholder="Search the Library"
       autofocus
       autocomplete="false"
-      class="w-full pl-[30px] pr-[20px] py-[20px] h-[55px] bg-[#241f20] bg-no-repeat bg-left border-none text-white transition-all duration-500 ease-in-out focus:outline-none focus:bg-[#241f20] focus:bg-no-repeat focus:bg-right-[580px]"
+      class="w-full pl-[30px] pr-[20px] py-[20px] h-[55px] bg-[#1E293B] bg-no-repeat bg-left border-none text-white transition-all duration-500 ease-in-out focus:outline-none focus:bg-[#1E293B] focus:bg-no-repeat focus:bg-right-[580px] shadow-xl shadow-cool"
     />
     <div
-      class="w-fit bg-red-600 float-left h-[55px] flex items-center justify-center transition-all duration-300 ease-in-out hover:bg-red-500"
+      class="shadow-xl shadow-cool w-fit bg-red-600 float-left h-[55px] flex items-center justify-center transition-all duration-300 ease-in-out hover:bg-red-500"
     >
       <input
         value="Search"

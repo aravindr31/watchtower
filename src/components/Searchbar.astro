@@ -4,19 +4,19 @@ const param = Astro.url.searchParams.get("q");
 ---
 
 <div
-  class="flex rounded-sm shadow-cool-grey-400 shaow-xl overflow-hidden max-w-lg ml-auto font-[sans-serif] mx-4"
+  class="flex rounded-sm shadow-cool-grey-400 shadow-xl overflow-hidden w-full md:max-w-lg ml-auto font-[sans-serif] mx-4 my-2 md:my-0"
 >
-  <form class="flex flex-row">
+  <form class="flex flex-row w-full">
     <input
       type="text"
       name="search"
       value={param}
       placeholder="Search"
       autocomplete="false"
-      class="w-full outline-none bg-[#241f20] text-white text-sm px-4 py-3"
+      class="w-full outline-none bg-[#1E293B] text-white text-sm px-4 py-3"
     />
     <div
-      class="w-fit bg-red-600 float-left flex items-center justify-center transition-all duration-300 ease-in-out hover:bg-red-500"
+      class="w-fit bg-red-600 flex items-center justify-center transition-all duration-300 ease-in-out hover:bg-red-500"
     >
       <input
         value="Search"
@@ -26,6 +26,7 @@ const param = Astro.url.searchParams.get("q");
     </div>
   </form>
 </div>
+
 <script>
   document.addEventListener("astro:page-load", () => {
     const form = document.querySelector("form");

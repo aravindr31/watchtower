@@ -7,43 +7,51 @@ const path = Astro.url.pathname;
 const hideNavSearch = path.includes("/movie") || path.includes("/tv") || false;
 ---
 
-<nav class="nav border-b border-gray-800 sticky top-0 z-30 bg[#181A1B]">
+<nav
+  class="nav sticky top-0 z-30 bg-gradient-to-t from-[#020024] via-[#0b192c] to-[#16213e]"
+>
   <div
-    class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 py-6"
+    class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4 lg:px-0 py-4"
   >
-    <ul class="flex flex-col md:flex-row items-center">
-      <li>
-        <a href="/" class="flex items-center font-bold text-xl">
+    <div class="flex flex-row w-full">
+      <div class="flex space-x-1 justify-between items-center w-full md:w-auto">
+        <a href="/" class="flex items-center justify-center font-bold text-xl">
           <Logo />
-          <span> &nbsp; watch</span>
-          &nbsp;
-          <span class="text-[#dc3636]">tower</span>
+          <span>watch</span>
+          <span class="text-red-500">tower</span>
         </a>
-      </li>
-      <li class="md:ml-16 mt-3 md:mt-0">
-        <a href="/movie" class="hover:text-gray-300">Movies</a>
-      </li>
-      <li class="md:ml-6 mt-3 md:mt-0">
-        <a href="/tv" class="hover:text-gray-300">TV Shows</a>
-      </li>
-    </ul>
-    {hideNavSearch && <Searchbar />}
-    <a href="/authorize">
-      <svg
-        class="w-8"
-        viewBox="0 0 1024 1024"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="#000000"
-        ><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
-          id="SVGRepo_tracerCarrier"
-          stroke-linecap="round"
-          stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier">
-          <circle cx="512" cy="512" r="512" style="fill:#dc3636"></circle>
-          <path
-            d="m458.15 617.7 18.8-107.3a56.94 56.94 0 0 1 35.2-101.9V289.4h-145.2a56.33 56.33 0 0 0-56.3 56.3v275.8a33.94 33.94 0 0 0 3.4 15c12.2 24.6 60.2 103.7 197.9 164.5V622.1a313.29 313.29 0 0 1-53.8-4.4zM656.85 289h-144.9v119.1a56.86 56.86 0 0 1 35.7 101.4l18.8 107.8A320.58 320.58 0 0 1 512 622v178.6c137.5-60.5 185.7-139.9 197.9-164.5a33.94 33.94 0 0 0 3.4-15V345.5a56 56 0 0 0-16.4-40 56.76 56.76 0 0 0-40.05-16.5z"
-            style="fill:#fff"></path>
-        </g></svg
+        <!-- <button
+        class="md:hidden text-white focus:outline-none"
+        aria-expanded="false"
       >
-    </a>
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button> -->
+      </div>
+      <ul class="flex flex-row items-center w-auto mx-4">
+        <li class="w-fit mx-2 md:mx-4 lg:ml-16">
+          <a href="/movie" class="hover:text-gray-300">Movies</a>
+        </li>
+        <li class="md:hidden text-red-500">
+          <p>|</p>
+        </li>
+        <li class="w-fit mx-2 md:mx-4 lg:ml-6">
+          <a href="/tv" class="hover:text-gray-300">Shows</a>
+        </li>
+      </ul>
+    </div>
+
+    {hideNavSearch && <Searchbar />}
   </div>
 </nav>

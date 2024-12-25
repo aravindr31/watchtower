@@ -5,16 +5,16 @@ import { Image } from "astro:assets";
 
 <div class="movie-images">
   <div class="container mx-auto px-4 py-16">
-    <h2 class="text-4xl font-semibold">Images</h2>
+    <h2 class="text-2xl md:text-4xl font-medium md:font-semibold">Images</h2>
     <div class="container mx-auto w-full overflow-hidden relative mt-8">
       <div class="w-full h-full absolute">
         <div
-          class="w-1/4 h-full absolute z-50 left-0"
+          class="w-1/6 h-full absolute z-50 left-0"
           style="background: linear-gradient(to right, #18212F 0%, rgba(255, 255, 255, 0) 100%);"
         >
         </div>
         <div
-          class="w-1/4 h-full absolute z-50 right-0"
+          class="w-1/12 h-full absolute z-50 right-0"
           style="background: linear-gradient(to left, #18212F 0%, rgba(255, 255, 255, 0) 100%);"
         >
         </div>
@@ -25,7 +25,7 @@ import { Image } from "astro:assets";
       >
         {
           images.map((image: { file_path: any }) => (
-            <div class="carousel-focus flex items-center flex-col relative rounded-lg mx-2 shadow-lg w-[450px]">
+            <div class="carousel-focus flex items-center flex-col relative rounded-lg mx-2 shadow-lg w-[300px] md:w-[450px]">
               <Image
                 inferSize={true}
                 src={`https://image.tmdb.org/t/p/w500${image.file_path}`}
