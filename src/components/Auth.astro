@@ -1,4 +1,4 @@
-<div class="max-w-sm mx-auto md:max-w-lg pt-20 px-3">
+<div class="sm:max-w-md mx-auto md:max-w-xl pt-20 px-3 min-w-96">
   <div class="w-full">
     <div class="h-64 py-3 rounded text-center">
       <h1 class="text-xl uppercase">Authenticate with Passcode</h1>
@@ -8,41 +8,46 @@
           class="flex flex-row justify-center text-center px-2 mt-5"
         >
           <input
-            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            class="mx-1 sm:mx-2 border-2 w-1/6 h-16 md:h-20 text-2xl font-semibold border-[#1E293B] bg-[#1E293B] text-white text-center form-control rounded outline-none"
             type="text"
             id="first"
             maxlength="1"
             autofocus
           />
           <input
-            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            class="mx-1 sm:mx-2 border-2 w-1/6 h-16 md:h-20 text-2xl font-semibold border-[#1E293B] bg-[#1E293B] text-white text-center form-control rounded outline-none"
             type="text"
-            id="second"
+            id="first"
             maxlength="1"
+            autofocus
           />
           <input
-            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            class="mx-1 sm:mx-2 border-2 w-1/6 h-16 md:h-20 text-2xl font-semibold border-[#1E293B] bg-[#1E293B] text-white text-center form-control rounded outline-none"
             type="text"
-            id="third"
+            id="first"
             maxlength="1"
+            autofocus
           />
           <input
-            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            class="mx-1 sm:mx-2 border-2 w-1/6 h-16 md:h-20 text-2xl font-semibold border-[#1E293B] bg-[#1E293B] text-white text-center form-control rounded outline-none"
             type="text"
-            id="fourth"
+            id="first"
             maxlength="1"
+            autofocus
           />
           <input
-            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            class="mx-1 sm:mx-2 border-2 w-1/6 h-16 md:h-20 text-2xl font-semibold border-[#1E293B] bg-[#1E293B] text-white text-center form-control rounded outline-none"
             type="text"
-            id="fifth"
+            id="first"
             maxlength="1"
+            autofocus
           />
           <input
-            class="m-2 border-3 text-2xl font-semibold border-[#686d76] h-20 w-20 bg-[#686d76] text-white text-center form-control rounded outline-none"
+            class="mx-1 sm:mx-2 border-2 w-1/6 h-16 md:h-20 text-2xl font-semibold border-[#1E293B] bg-[#1E293B] text-white text-center form-control rounded outline-none"
             type="text"
-            id="sixth"
+            id="first"
             maxlength="1"
+            autofocus
           />
         </div>
         <div
@@ -51,6 +56,7 @@
           <input
             value="Get Token"
             type="submit"
+            id="authorize"
             class="mx-2 text-white uppercase text-[15px] text-center font-medium tracking-[2px] transition-all duration-300 ease-in-out hover:tracking-[2.5px]"
           />
         </div>
@@ -128,12 +134,16 @@
     const form = document.querySelector("#otp-form");
     form?.addEventListener("submit", async (event) => {
       event.preventDefault();
+      const submitButton = document.getElementById("authorize");
+      console.log("submitButton", submitButton);
+      if (submitButton) submitButton.value = "Verifying passcode...";
       const token = getFinalToken();
       const auth = await authenticate(token);
       if (auth.valid) {
         window.history.go(-1);
       } else {
         console.log(auth.message);
+        if (submitButton) submitButton.value = "Get Token";
         removeInputValue();
       }
     });
