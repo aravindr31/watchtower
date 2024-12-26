@@ -1,14 +1,14 @@
 ---
+import { Image } from "astro:assets";
 import InternalError from "../../../components/InternalError.astro";
-import Loading from "../../../components/Loading.astro";
+import ContentCard from "../../../components/ContentCard.astro";
 
 const { id } = Astro.params;
 
-const url = `${Astro.url.origin}/api/getperson.json?person=${id}`;
+const url = `${Astro.url.origin}/api/v1/tmdb/person.json?person=${id}`;
 
 let person = null;
 let isError = false;
-let isLoading = true;
 let castMovies = [];
 let knownFor = null;
 let social = null;
@@ -33,7 +33,7 @@ const fetchPersonDetails = async () => {
       ...profileData,
       profile_path: profileData.profile_path
         ? "https://image.tmdb.org/t/p/w300/" + profileData.profile_path
-        : "https://via.placeholder.com/300x450",
+        : 'https://placehold.co/300x450?text=:(',
       birthday: new Date(profileData.birthday).toLocaleDateString("en-us", {
         year: "numeric",
         month: "long",
@@ -58,17 +58,14 @@ const fetchPersonDetails = async () => {
           id: string;
         }) => {
           const title = movie.title || movie.name || "Untitled";
-
           return {
             ...movie,
             title,
-            poster_path: movie.poster_path
-              ? "https://image.tmdb.org/t/p/w185/" + movie.poster_path
-              : "https://via.placeholder.com/185x278",
+            poster_path: movie.poster_path,
             linkToPage:
               movie.media_type === "movie"
                 ? `/movie/${movie.id}`
-                : `/tv/${movie.id}`,
+                :movie.media_type === "tv" ? `/tv/${movie.id}`: "/",
           };
         }
       );
@@ -113,26 +110,25 @@ const fetchPersonDetails = async () => {
       await fetchPersonDetails();
     }
     isError = true;
-  } finally {
-    isLoading = false;
   }
 };
 await fetchPersonDetails()
+
 ---
 
 {isError && <InternalError />}
-{isLoading && <Loading />}
-{ !isError && !isLoading && person &&(
+{ !isError && person &&(
 <div class="movie-info border-b border-gray-800">
-  <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row">
+  <div class="container mx-auto px-4 py-16 flex items-center lg:items-start flex-col lg:flex-row">
     <div class="flex-none">
-      <img
+      <Image
         src={person.profile_path}
         alt={person.name}
         class="person-photo w-76"
         id="person-photo"
+        inferSize={true}
       />
-      <ul class="flex items-center mt-4">
+      <ul class="flex items-center justify-center lg:justify-start mt-4">
         {
           social.facebook_id && (
             <li>
@@ -206,11 +202,11 @@ await fetchPersonDetails()
         }
       </ul>
     </div>
-    <div class="md:ml-24">
-      <h2 class="text-4xl mt-4 md:mt-0 font-semibold">{person.name}</h2>
-      <div class="flex flex-wrap items-center text-gray-400 text-sm">
+    <div class="lg:ml-24">
+      <h2 class="text-4xl mt-4 lg:mt-0 font-medium text-center lg:text-left">{person.name}</h2>
+      <div class="flex flex-wrap items-center text-gray-400 text-sm justify-center lg:justify-start">
         <svg
-          class="fill-current text-gray-400 hover:text-white w-4"
+          class="fill-current text-gray-400 hover:text-white w-3 lg:w-4"
           viewBox="0 0 448 512"
           ><path
             d="M448 384c-28.02 0-31.26-32-74.5-32-43.43 0-46.825 32-74.75 32-27.695 0-31.454-32-74.75-32-42.842 0-47.218 32-74.5 32-28.148 0-31.202-32-74.75-32-43.547 0-46.653 32-74.75 32v-80c0-26.5 21.5-48 48-48h16V112h64v144h64V112h64v144h64V112h64v144h16c26.5 0 48 21.5 48 48v80zm0 128H0v-96c43.356 0 46.767-32 74.75-32 27.951 0 31.253 32 74.75 32 42.843 0 47.217-32 74.5-32 28.148 0 31.201 32 74.75 32 43.357 0 46.767-32 74.75-32 27.488 0 31.252 32 74.5 32v96zM96 96c-17.75 0-32-14.25-32-32 0-31 32-23 32-64 12 0 32 29.5 32 56s-14.25 40-32 40zm128 0c-17.75 0-32-14.25-32-32 0-31 32-23 32-64 12 0 32 29.5 32 56s-14.25 40-32 40zm128 0c-17.75 0-32-14.25-32-32 0-31 32-23 32-64 12 0 32 29.5 32 56s-14.25 40-32 40z"
@@ -223,12 +219,12 @@ await fetchPersonDetails()
         >
       </div>
 
-      <p class="text-gray-300 mt-8">
+      <p class="text-gray-300 mt-8 text-justify">
         {person.biography}
       </p>
 
       <h4 class="font-semibold mt-12">Known For</h4>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
         {
           knownFor.map(
             (movie: {
@@ -238,20 +234,7 @@ await fetchPersonDetails()
               id: any;
             }) => (
               <div class="mt-4">
-                <a href={movie.linkToPage}>
-                  <img
-                    src={movie.poster_path}
-                    alt={movie?.title + ""}
-                    class="thumbnail hover:opacity-75 transition ease-in-out duration-150"
-                    id={`movie-poster-${movie.id}`}
-                  />
-                </a>
-                <a
-                  href={movie.linkToPage}
-                  class="text-sm leading-normal block text-gray-400 hover:text-white mt-1"
-                >
-                  {movie.title}
-                </a>
+                <ContentCard content={movie} media_type={movie.media_type} recommend={true}/>
               </div>
             )
           )
@@ -263,7 +246,7 @@ await fetchPersonDetails()
 
 <div class="credits border-b border-gray-800">
   <div class="container mx-auto px-4 py-16">
-    <h2 class="text-4xl font-semibold">Credits</h2>
+    <h2 class="text-4xl font-medium">Credits</h2>
     <ul class="list-disc leading-loose pl-5 mt-8">
       {
         credits.map(
@@ -280,7 +263,7 @@ await fetchPersonDetails()
                   {credit.title}
                 </a>
               </strong>
-              as {credit.character}
+              {credit.character &&` as ${credit.character}`}
             </li>
           )
         )

@@ -1,8 +1,12 @@
-import { TMDB_BASEURL, TMDB_HEADER, accountId } from "../../lib/commonExports";
-import { checkIfExists } from "./checkids.json";
-import { addToDB } from "./dbdata.json";
-import { getMinimalMovieData } from "./getmdetail.json";
-import { getMinimalTvData } from "./getsdetail.json";
+import {
+  TMDB_BASEURL,
+  TMDB_HEADER,
+  accountId,
+} from "../../../../lib/commonExports";
+import { checkIfExists } from "../media/checkids.json";
+import { addToDB } from "../media/dbdata.json";
+import { getMinimalMovieData } from "../movie/getdetails";
+import { getMinimalTvData } from "../tv/getdetails";
 
 const dbInsert = async (selector, id) => {
   const idCheck = await checkIfExists(selector, [id]);

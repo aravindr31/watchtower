@@ -1,10 +1,12 @@
 ---
 export const prerender = true;
-import Logo from "./Logo.astro";
+
+import { Image } from "astro:assets";
+import watchtower from "../assets/watchtower.svg";
 import Searchbar from "./Searchbar.astro";
 
 const path = Astro.url.pathname;
-const hideNavSearch = path.includes("/movie") || path.includes("/tv") || false;
+const hideNavSearch = path == "/" || path.includes("/search") || false;
 ---
 
 <nav
@@ -16,28 +18,10 @@ const hideNavSearch = path.includes("/movie") || path.includes("/tv") || false;
     <div class="flex flex-row w-full">
       <div class="flex space-x-1 justify-between items-center w-full md:w-auto">
         <a href="/" class="flex items-center justify-center font-bold text-xl">
-          <Logo />
+          <Image src={watchtower} inferSize={true} alt="watchtower-icon" />
           <span>watch</span>
           <span class="text-red-500">tower</span>
         </a>
-        <!-- <button
-        class="md:hidden text-white focus:outline-none"
-        aria-expanded="false"
-      >
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button> -->
       </div>
       <ul class="flex flex-row items-center w-auto mx-4">
         <li class="w-fit mx-2 md:mx-4 lg:ml-16">
@@ -52,6 +36,6 @@ const hideNavSearch = path.includes("/movie") || path.includes("/tv") || false;
       </ul>
     </div>
 
-    {hideNavSearch && <Searchbar />}
+    {!hideNavSearch && <Searchbar />}
   </div>
 </nav>

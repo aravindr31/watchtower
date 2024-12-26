@@ -1,4 +1,4 @@
-import { createShow, getPageWiseShows } from "../../lib/shows";
+import { getPageWiseShows } from "../../../../lib/shows";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
@@ -12,14 +12,6 @@ export const GET = async ({ request }) => {
   }
 
   return new Response(JSON.stringify(shows), {
-    status: 200,
-  });
-};
-
-export const POST = async ({ request }) => {
-  const newShow = await request.json();
-  const show = await createShow(newShow);
-  return new Response(JSON.stringify(show), {
     status: 200,
   });
 };

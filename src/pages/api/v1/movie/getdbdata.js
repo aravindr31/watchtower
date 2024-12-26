@@ -1,4 +1,4 @@
-import { createMovie, getPageWiseMovies } from "../../lib/movies";
+import { getPageWiseMovies } from "../../../../lib/movies";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
@@ -12,14 +12,6 @@ export const GET = async ({ request }) => {
   }
 
   return new Response(JSON.stringify(movies), {
-    status: 200,
-  });
-};
-
-export const POST = async ({ request }) => {
-  const newMovie = await request.json();
-  const movie = await createMovie(newMovie);
-  return new Response(JSON.stringify(movie), {
     status: 200,
   });
 };

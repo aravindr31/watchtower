@@ -1,5 +1,5 @@
-import { createMovie, getAllMovies } from "../../lib/movies";
-import { createShow, getAllShows } from "../../lib/shows";
+import { createMovie, getAllMovies } from "../../../../lib/movies";
+import { createShow, getAllShows } from "../../../../lib/shows";
 
 export const addToDB = async (selector, data) => {
   return selector === "movie"

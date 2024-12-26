@@ -1,5 +1,5 @@
-import { checkIfShowExists } from "../../lib/shows";
-import { checkIfMovieExists } from "../../lib/movies";
+import { checkIfShowExists } from "../../../../lib/shows";
+import { checkIfMovieExists } from "../../../../lib/movies";
 
 export const checkIfExists = async (selector, data) => {
   return selector === "movie"

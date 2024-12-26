@@ -1,4 +1,4 @@
-import { TMDB_BASEURL, TMDB_HEADER } from "../../lib/commonExports";
+import { TMDB_BASEURL, TMDB_HEADER } from "../../../../lib/commonExports";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);

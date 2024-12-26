@@ -3,7 +3,7 @@ import { generateToken, verifyToken } from "./lib/authdata";
 
 export const onRequest = defineMiddleware(
   async ({ request, url, cookies, redirect }, next) => {
-    if (url.pathname == "/api/markaswatched") {
+    if (url.pathname == "/api/v1/auth/markaswatched") {
       try {
         const authHeader = request.headers.get("authorization");
         if (!authHeader)
@@ -44,7 +44,7 @@ export const onRequest = defineMiddleware(
       }
     }
 
-    if (url.pathname === "/api/auth") {
+    if (url.pathname === "/api/v1/auth/verifytoken") {
       const response = await next();
 
       try {

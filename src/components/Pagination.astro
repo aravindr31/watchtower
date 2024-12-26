@@ -3,7 +3,6 @@ const { currentPage, totalPages } = Astro.props;
 
 const pageUrl = Astro.url;
 
-// Helper function to create the pagination URL
 const getPageUrl = (page: number | string) => {
   if (page !== 1) {
     pageUrl.searchParams.set("page", `${page}`);
@@ -51,16 +50,14 @@ const pageRange = generatePageRange(
 ---
 
 <div class="flex items-center justify-center space-x-2 p-4 my-1">
-  <!-- Previous Button -->
   <a
-    href={currentPage > 1 ? getPageUrl(currentPage - 1) : "#"}
+    href={currentPage > 1 ? getPageUrl(parseInt(currentPage) - 1) : "#"}
     aria-disabled={currentPage === 1}
-    class={`px-4 py-2 rounded text-white ${currentPage == 1 ? "opacity-50 cursor-not-allowed" : "hover:text-gray-200"}`}
+    class={`px-4 py-2 rounded text-white ${currentPage == 1 ? "opacity-50 cursor-not-allowed" : "hover:text-red-500"}`}
   >
     <span class="text-3xl">&laquo;</span>
   </a>
 
-  <!-- Page Numbers -->
   {
     pageRange.map((page) =>
       page === "..." ? (
@@ -76,11 +73,12 @@ const pageRange = generatePageRange(
     )
   }
 
-  <!-- Next Button -->
   <a
-    href={currentPage < totalPages ? getPageUrl(currentPage + 1) : "#"}
+    href={currentPage < totalPages
+      ? getPageUrl(parseInt(currentPage) + 1)
+      : "#"}
     aria-disabled={currentPage === totalPages}
-    class={`px-4 py-2 rounded text-white ${currentPage == totalPages ? "opacity-50 cursor-not-allowed" : "hover:text-gray-200"}`}
+    class={`px-4 py-2 rounded text-white ${currentPage == totalPages ? "opacity-50 cursor-not-allowed" : "hover:text-red-500"}`}
   >
     <span class="text-3xl">&raquo</span>
   </a>

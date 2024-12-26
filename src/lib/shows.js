@@ -43,7 +43,6 @@ export const createShow = async (newShow) => {
     return result;
   } catch (error) {
     console.error("Error creating show:", error.message);
-    // throw new Error("Failed to create show.");
   }
 };
 
