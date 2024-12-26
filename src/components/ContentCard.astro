@@ -1,21 +1,23 @@
 ---
-const { movie, recommend = false } = Astro.props;
+const { content, media_type, recommend = false } = Astro.props;
 import { Image } from "astro:assets";
 ---
 
 <div class=`mt-8 ${recommend == true ? "mx-2" : ""}`>
   <div class="relative group">
-    <a href={`/movie/${movie.id}`} class="block relative">
+    <a href={`/${media_type}/${content.id}`} class="block relative">
       <Image
-        src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-        alt={`${movie.title} Poster`}
+        src={content.poster_path != null
+          ? `https://image.tmdb.org/t/p/w500/${content.poster_path}`
+          : `https://placehold.co/500x750?text=:(`}
+        alt={`${content.title} Poster`}
         class="thumbnail hover:opacity-75 transition ease-in-out duration-150"
-        id=`movie-poster-${movie.id}`
+        id=`movie-poster-${content.id}`
         inferSize={true}
       />
       <div
         class="hidden absolute inset-0 flex w-full h-full mx-auto items-center justify-center"
-        id=`svg-overlay-${movie.id}`
+        id=`svg-overlay-${content.id}`
       >
         <div class="mx-auto">
           <svg
@@ -45,9 +47,9 @@ import { Image } from "astro:assets";
   </div>
   <div class="mt-2">
     <a
-      href={`/movie/${movie.id}`}
+      href={`/${media_type}/${content.id}`}
       class=`${recommend == true ? "text-sm" : "text-lg"} text-md sm:text-lg mt-2 hover:text-gray-300`
-      >{movie.title}</a
+      >{content.title || content.name}</a
     >
     {
       !recommend && (
@@ -60,9 +62,11 @@ import { Image } from "astro:assets";
               />
             </g>
           </svg>
-          <span class="ml-1">{parseFloat(movie.vote_average.toFixed(1))}</span>
+          <span class="ml-1">
+            {parseFloat(content.vote_average.toFixed(1))}
+          </span>
           <span class="mx-2">|</span>
-          <span>{movie.release_date}</span>
+          <span>{content.release_date || content.first_air_date}</span>
         </div>
       )
     }
@@ -74,8 +78,8 @@ import { Image } from "astro:assets";
 
     const handlePosterClick = (e: Event) => {
       const poster = e.target as HTMLImageElement;
-      const movieId = poster.id.split("-")[2];
-      const overlay = document.getElementById(`svg-overlay-${movieId}`);
+      const contentId = poster.id.split("-")[2];
+      const overlay = document.getElementById(`svg-overlay-${contentId}`);
       poster.classList.add("opacity-50");
       overlay?.classList.remove("hidden");
     };

@@ -1,3 +1,7 @@
+---
+
+---
+
 <div class="sm:max-w-md mx-auto md:max-w-xl pt-20 px-3 min-w-96">
   <div class="w-full">
     <div class="h-64 py-3 rounded text-center">
@@ -116,7 +120,7 @@
     };
 
     const authenticate = async (token: string) => {
-      const url = new URL("/api/auth", window.location.origin);
+      const url = new URL("/api/v1/auth/verifytoken", window.location.origin);
       return await fetch(url, {
         method: "POST",
         body: JSON.stringify({

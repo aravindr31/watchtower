@@ -1,5 +1,5 @@
 import speakeasy from "speakeasy";
-import { getAccountSecret } from "../../lib/authdata";
+import { getAccountSecret } from "../../../../lib/authdata";
 
 export const POST = async ({ request }) => {
   const secret = await getAccountSecret();

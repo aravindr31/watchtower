@@ -1,10 +1,15 @@
-import { TMDB_BASEURL, TMDB_HEADER, accountId } from "../../lib/commonExports";
+import {
+  TMDB_BASEURL,
+  TMDB_HEADER,
+  accountId,
+} from "../../../../lib/commonExports";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const pageValue = reqUrl.searchParams.get("page") || 1;
+  const query = reqUrl.searchParams.get("query") || "";
 
-  const url = `${TMDB_BASEURL}/account/${accountId}/watchlist/movies?sort_by=created_at.desc&page=${pageValue}`;
+  const url = `${TMDB_BASEURL}/search/multi?query=${query}&include_adult=false&language=en-US&page=${pageValue}`;
   try {
     const response = await fetch(url, TMDB_HEADER);
     if (!response.ok) {

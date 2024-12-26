@@ -2,10 +2,10 @@
 const { title, images } = Astro.props;
 import { Image } from "astro:assets";
 ---
-
+{ images.length > 0 && (
 <div class="movie-images">
   <div class="container mx-auto px-4 py-16">
-    <h2 class="text-2xl md:text-4xl font-medium md:font-semibold">Images</h2>
+    <h2 class="text-2xl md:text-4xl font-medium md:font-semibold">Cinemagraphs</h2>
     <div class="container mx-auto w-full overflow-hidden relative mt-8">
       <div class="w-full h-full absolute">
         <div
@@ -28,7 +28,7 @@ import { Image } from "astro:assets";
             <div class="carousel-focus flex items-center flex-col relative rounded-lg mx-2 shadow-lg w-[300px] md:w-[450px]">
               <Image
                 inferSize={true}
-                src={`https://image.tmdb.org/t/p/w500${image.file_path}`}
+                src={image.file_path != null ? `https://image.tmdb.org/t/p/w500${image.file_path}`: `https://placehold.co/450x300?text=:(`}}
                 loading="lazy"
                 alt={title}
                 class="hover:opacity-75 transition ease-in-out duration-150"
@@ -70,3 +70,4 @@ import { Image } from "astro:assets";
     transform: scale(1.1);
   }
 </style>
+)}

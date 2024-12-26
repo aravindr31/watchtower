@@ -1,12 +1,20 @@
-import { TMDB_BASEURL, TMDB_HEADER, accountId } from "../../lib/commonExports";
+import {
+  TMDB_BASEURL,
+  TMDB_HEADER,
+  accountId,
+} from "../../../../lib/commonExports";
 
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const pageValue = reqUrl.searchParams.get("page") || 1;
-  const query = reqUrl.searchParams.get("query") || "";
+  const media_type = reqUrl.searchParams.get("type") || null;
 
-  const url = `${TMDB_BASEURL}/search/multi?query=${query}&include_adult=false&language=en-US&page=${pageValue}`;
+  const url =
+    media_type != null &&
+    `${TMDB_BASEURL}/account/${accountId}/watchlist/${media_type}?sort_by=created_at.desc&page=${pageValue}`;
+
   try {
+    if (!media_type) throw new Error("type param is missing");
     const response = await fetch(url, TMDB_HEADER);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);

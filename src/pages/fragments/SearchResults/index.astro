@@ -1,15 +1,12 @@
 ---
 import InternalError from "../../../components/InternalError.astro";
-import Loading from "../../../components/Loading.astro";
-import MovieCard from "../../../components/MovieCard.astro";
-import TvShowCard from "../../../components/TvShowCard.astro";
 import Pagination from "../../../components/Pagination.astro";
+import ContentCard from "../../../components/ContentCard.astro";
 
 const pageValue = Astro.url.searchParams.get("page") || 1;
 const searchQuery = Astro.url.searchParams.get("q") || "";
 
 let isError = false;
-let isLoading = true;
 let total_pages = 1;
 let dataArray: any[] = [];
 let retries = 5;
@@ -17,7 +14,7 @@ let retries = 5;
 const fetchSearch = async () => {
   try {
     const response = await fetch(
-      `${Astro.url.origin}/api/getsearchresult.json?query=${searchQuery}&page=${pageValue}`,
+      `${Astro.url.origin}/api/v1/tmdb/search.json?query=${searchQuery}&page=${pageValue}`,
       {
         method: "GET",
       }
@@ -36,34 +33,28 @@ const fetchSearch = async () => {
       isError = true;
       console.error(error);
     }
-  } finally {
-    isLoading = false;
   }
 };
 await fetchSearch();
 ---
 
 {isError && <InternalError />}
-{isLoading && <Loading />}
 {
-  !isError && !isLoading && (
+  !isError && (
     <div class="container mx-auto px-4 pt-16 mb-16">
-      <div class="popular-movies">
-        <h2 class="uppercase tracking-wider text-orange-500 text-lg font-semibold">
+      <div class="search-result">
+        <h2 class="uppercase tracking-wider text-red-500 text-lg font-semibold">
           Search Results
         </h2>
         {dataArray.length > 0 ? (
           <>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
               {dataArray?.map((item: any) => {
-                if (item?.media_type == "movie" && item?.poster_path != null) {
-                  return <MovieCard movie={item} />;
-                } else if (
-                  item?.media_type == "tv" &&
-                  item?.poster_path != null
-                ) {
-                  return <TvShowCard show={item} />;
-                }
+                if (item?.media_type == "movie" || item?.media_type == "tv") {
+                  return (
+                    <ContentCard content={item} media_type={item?.media_type} />
+                  );
+                } else return "";
               })}
             </div>
             {total_pages > 1 && (
@@ -78,7 +69,7 @@ await fetchSearch();
               Sorry, there was an error loading this page.
             </p>
             <a
-              class="h-12 py-2 px-6 font-semibold rounded-md text-teal border-2 border-white"
+              class="mx-4 h-16 py-3 px-6 text-white bg-red-500 uppercase text-[15px] text-center font-medium tracking-[2px] transition-all duration-300 ease-in-out hover:tracking-[2.5px]"
               href="javascript:window.location.reload(true)"
             >
               Retry

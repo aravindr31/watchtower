@@ -1,20 +1,20 @@
 ---
+import ContentCard from "../../../components/ContentCard.astro";
 import InternalError from "../../../components/InternalError.astro";
-import Loading from "../../../components/Loading.astro";
 import Pagination from "../../../components/Pagination.astro";
-import TvShowCard from "../../../components/TvShowCard.astro";
 
 const pageValue = Astro.url.searchParams.get("page") || 1;
 
+const { media_type } = Astro.props;
+
 let isError = false;
-let isLoading = true;
 let total_pages = 1;
-let tvList: any[] = [];
+let contentArray: any[] = [];
 let retries = 5;
-const fetchShows = async () => {
+const fetchContentFromDB = async () => {
   try {
     const response = await fetch(
-      `${Astro.url.origin}/api/getdbshows.json?page=${pageValue}`,
+      `${Astro.url.origin}/api/v1/${media_type}/getdbdata?page=${pageValue}`,
       {
         method: "GET",
       }
@@ -22,37 +22,44 @@ const fetchShows = async () => {
     if (!response.ok) throw new Error(`DB Fetch failed ${response.status}`);
     const parsedRes = await response.json();
     total_pages = parsedRes?.totalPages;
-    tvList = parsedRes?.shows;
+    contentArray =
+      media_type == "movie"
+        ? parsedRes?.movies
+        : media_type == "tv"
+          ? parsedRes?.shows
+          : [];
   } catch (error) {
     if (retries > 0) {
       retries--;
       console.log(`Retrying fetch.. Total retires left - ${retries}`);
-      await fetchShows();
+      await fetchContentFromDB();
     } else {
       isError = true;
       console.error(error);
     }
-  } finally {
-    isLoading = false;
   }
 };
-await fetchShows();
+await fetchContentFromDB();
 ---
 
 {isError && <InternalError />}
-{isLoading && <Loading />}
 {
-  !isError && !isLoading && (
+  !isError && (
     <div class="container mx-auto px-4 pt-16 mb-16">
-      <div class="popular-tv">
+      <div class="popular-movies">
         <h2 class="uppercase tracking-wider text-red-500 text-lg font-semibold">
-          Recent Shows
+          Recent{" "}
+          {media_type == "movie"
+            ? "movies"
+            : media_type == "tv"
+              ? "shows"
+              : "media"}
         </h2>
-        {tvList.length > 0 ? (
+        {contentArray.length > 0 ? (
           <>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-              {tvList.map((show: any) => (
-                <TvShowCard show={show} />
+              {contentArray?.map((item: any) => (
+                <ContentCard content={item} media_type={media_type} />
               ))}
             </div>
             {total_pages > 1 && (
@@ -60,21 +67,7 @@ await fetchShows();
             )}
           </>
         ) : (
-          <div class="text-center py-16">
-            <h1 class="mb-3 text-8xl font-bold [font-size:_clamp(2.5em,8vw,7em)] [margin-bottom:_.5em]">
-              Oops!
-            </h1>
-            <hr class="mb-5 w-36 h-1 bg-teal border-0" />
-            <p class="mb-5 text-xl sm:text-3xl">
-              Sorry, there was an error loading this page.
-            </p>
-            <a
-              class="h-12 py-2 px-6 font-semibold rounded-md text-teal border-2 border-white"
-              href="javascript:window.location.reload(true)"
-            >
-              Retry
-            </a>
-          </div>
+          <InternalError />
         )}
       </div>
     </div>

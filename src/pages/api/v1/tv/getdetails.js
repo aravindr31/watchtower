@@ -1,10 +1,14 @@
-import { TMDB_BASEURL, TMDB_HEADER } from "../../lib/commonExports";
+import {
+  TMDB_BASEURL,
+  TMDB_HEADER,
+  accountId,
+} from "../../../../lib/commonExports";
 
 const frameUrl = (id) => {
-  return `${TMDB_BASEURL}/movie/${id}?append_to_response=credits,videos,images`;
+  return `${TMDB_BASEURL}/tv/${id}?append_to_response=credits,videos,images`;
 };
 
-export const getMinimalMovieData = async (id) => {
+export const getMinimalTvData = async (id) => {
   const url = frameUrl(id);
   try {
     const response = await fetch(url, TMDB_HEADER);
@@ -14,28 +18,30 @@ export const getMinimalMovieData = async (id) => {
     const result = await response.json();
     const responseData = {
       id: result?.id,
-      title: result?.title,
+      name: result?.name,
       poster_path: result?.poster_path,
       vote_average: parseFloat(result?.vote_average.toFixed(1)),
-      release_date: new Date(result?.release_date).toLocaleDateString("en-us", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
+      first_air_date: new Date(result?.first_air_date).toLocaleDateString(
+        "en-us",
+        {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }
+      ),
       success: true,
     };
-
     return responseData;
   } catch (err) {
     console.error("API Error:", err.message);
     return { success: false, error: err.message };
   }
 };
-
 export const GET = async ({ request }) => {
   const reqUrl = new URL(request.url);
-  const movieId = reqUrl.searchParams.get("id") || 1;
-  const url = frameUrl(movieId);
+  const tvId = reqUrl.searchParams.get("id") || 1;
+
+  const url = frameUrl(tvId);
   try {
     const response = await fetch(url, TMDB_HEADER);
     if (!response.ok) {
