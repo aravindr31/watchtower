@@ -107,11 +107,21 @@ await checkState();
             }),
           }
         );
+        console.log(response);
         if (!response.ok) {
-          console.error(`Error: ${response.statusText}`);
-          window.location.assign(
-            new URL("/authorize", window.location.origin).toString()
-          );
+          console.error(`Error: ${response.status}`);
+          if (response.status == 403) {
+            window.location.assign(
+              new URL("/authorize", window.location.origin).toString()
+            );
+          } else {
+            if (buttonSpan) {
+              buttonSpan.textContent = "Error - Retry";
+              setTimeout(() => {
+                buttonSpan.textContent = "Mark As Watched";
+              }, 2000);
+            }
+          }
         } else {
           if (buttonSpan) buttonSpan.textContent = "Watched";
         }

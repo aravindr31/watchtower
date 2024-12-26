@@ -32,7 +32,7 @@ export const checkIfMovieExists = async (idList) => {
     }
   } catch (error) {
     console.log("Error checking ids -", error.message);
-    throw new Error("Error checking ids");
+    throw new Error("Error checking ids", error);
   }
 };
 
@@ -43,7 +43,7 @@ export const createMovie = async (newMovie) => {
     return result;
   } catch (error) {
     console.error("Error creating movie:", error.message);
-    throw new Error("Failed to create movie.");
+    throw new Error("Failed to create movie.", error);
   }
 };
 
