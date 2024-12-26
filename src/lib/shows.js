@@ -11,7 +11,7 @@ export const getAllShows = async () => {
     return totalItems;
   } catch (err) {
     console.log("Error Fetching all shows", err.message);
-    // throw new Error("failed to fetch all shows");
+    throw new Error(err);
   }
 };
 
@@ -25,14 +25,13 @@ export const checkIfShowExists = async (idList) => {
         .toArray();
       const existingIds = matchingMovies.map((item) => item.id);
       const newIds = idList.filter((id) => !existingIds.includes(id));
-      // console.log(`newIds - ${newIds.length}`);
       return newIds;
     } else {
       throw new Error("idList is empty");
     }
   } catch (error) {
     console.log("Error checking ids -", err.message);
-    // throw new Error("Error checking ids");
+    throw new Error("Error checking ids", error);
   }
 };
 
