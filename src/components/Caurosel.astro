@@ -9,29 +9,27 @@ import { Image } from "astro:assets";
     <div class="container mx-auto w-full overflow-hidden relative mt-8">
       <div class="w-full h-full absolute">
         <div
-          class="w-1/6 h-full absolute z-50 left-0"
-          style="background: linear-gradient(to right, #18212F 0%, rgba(255, 255, 255, 0) 100%);"
+          class="w-1/6 h-full absolute z-50 left-0 bg-gradient-to-r from-[#222222]  to-[transparent] "
         >
         </div>
         <div
-          class="w-1/12 h-full absolute z-50 right-0"
-          style="background: linear-gradient(to left, #18212F 0%, rgba(255, 255, 255, 0) 100%);"
+          class="w-1/12 h-full absolute z-50 right-0 bg-gradient-to-l from-[#222222] to-[transparent]"
         >
         </div>
       </div>
       <div
-        class="carousel-items flex items-center justify-center"
-        style="width: fit-content; animation: carouselAnim 20s infinite alternate linear;"
+        class="carousel-items flex items-center justify-center w-fit"
+        style="animation: carouselAnim 20s infinite alternate linear;"
       >
         {
           images.map((image: { file_path: any }) => (
             <div class="carousel-focus flex items-center flex-col relative rounded-lg mx-2 shadow-lg w-[300px] md:w-[450px]">
               <Image
                 inferSize={true}
-                src={image.file_path != null ? `https://image.tmdb.org/t/p/w500${image.file_path}`: `https://placehold.co/450x300?text=:(`}}
+                src={image.file_path != null ? `https://image.tmdb.org/t/p/w500${image.file_path}`: `https://placehold.co/450x300/333333/EEE?font=montserrat&text=404`}
                 loading="lazy"
                 alt={title}
-                class="hover:opacity-75 transition ease-in-out duration-150"
+                class="hover:opacity-75 transition ease-in-out duration-150 rounded-sm"
               />
             </div>
           ))

@@ -43,7 +43,10 @@ await fetchRecommendations();
           {dataArray?.map((item: any) => {
             if (item?.poster_path != null) {
               return (
-                <div class="w-[150px] flex-shrink-0">
+                <div
+                  class="w-[150px] flex-shrink-0"
+                  transition:name="content-data"
+                >
                   <ContentCard
                     content={item}
                     media_type={item?.media_type}

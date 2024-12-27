@@ -23,15 +23,15 @@ const { title } = Astro.props as Props;
     <title>{title}</title>
     <ViewTransitions />
   </head>
-  <body class="font-sans bg-[#020024] text-white">
+  <body class="font-sans text-white bg-[#222222]">
     <div class="h-screen overflow-hidden flex flex-col">
-      <Nav />
-      <div id="container" class="h-full flex-1 overflow-y-auto mb-8">
+      <div id="container" class="h-full flex-auto overflow-y-auto">
+        <Nav />
         <div id="content">
           <slot />
         </div>
+        <Footer />
       </div>
-      <Footer />
     </div>
   </body>
 </html>
