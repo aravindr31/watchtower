@@ -6,7 +6,11 @@ const params = Astro.url.searchParams.get("q") || "";
 <div
   class="mt-16 rounded-sm relative top-1/2 transform -translate-y-1/2 mx-auto w-auto h-auto lg:w-[1026px] lg:h-[55px] flex flex-row"
 >
-  <form class="w-full px-4 sm:px-20 flex flex-row">
+  <form
+    class="w-full px-4 sm:px-20 flex flex-row"
+    transition:name="search"
+    transition:animate="slide"
+  >
     <input
       type="text"
       name="search"

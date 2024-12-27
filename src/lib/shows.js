@@ -47,7 +47,7 @@ export const createShow = async (newShow) => {
 
 export const getPageWiseShows = async (page) => {
   try {
-    const pageSize = 20;
+    const pageSize = 24;
     const skipCount = (page - 1) * pageSize;
     const collection = await ShowCollection();
     const totalItems = await collection.countDocuments();

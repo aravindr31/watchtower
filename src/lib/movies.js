@@ -49,7 +49,7 @@ export const createMovie = async (newMovie) => {
 
 export const getPageWiseMovies = async (page) => {
   try {
-    const pageSize = 20;
+    const pageSize = 24;
     const skipCount = (page - 1) * pageSize;
     const collection = await getMovieCollection();
     const totalItems = await collection.countDocuments();

@@ -57,7 +57,7 @@ await fetchContentFromDB();
         </h2>
         {contentArray.length > 0 ? (
           <>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-8">
               {contentArray?.map((item: any) => (
                 <ContentCard content={item} media_type={media_type} />
               ))}
@@ -69,6 +69,7 @@ await fetchContentFromDB();
         ) : (
           <InternalError />
         )}
+        <div id="sentinel" class="h-16 sm:h-0" />
       </div>
     </div>
   )

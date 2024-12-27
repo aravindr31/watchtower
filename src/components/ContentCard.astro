@@ -3,15 +3,18 @@ const { content, media_type, recommend = false } = Astro.props;
 import { Image } from "astro:assets";
 ---
 
-<div class=`mt-8 ${recommend == true ? "mx-2" : ""}`>
+<div
+  class=`mt-8 ${recommend == true ? "mx-2" : ""}`
+  transition:name="content-data"
+>
   <div class="relative group">
     <a href={`/${media_type}/${content.id}`} class="block relative">
       <Image
         src={content.poster_path != null
           ? `https://image.tmdb.org/t/p/w500/${content.poster_path}`
-          : `https://placehold.co/500x750?text=:(`}
+          : `https://placehold.co/500x750/333333/EEE?font=montserrat&text=404`}
         alt={`${content.title} Poster`}
-        class="thumbnail hover:opacity-75 transition ease-in-out duration-150"
+        class="thumbnail hover:opacity-75 transition ease-in-out duration-150 rounded-md shadow-xl"
         id=`movie-poster-${content.id}`
         inferSize={true}
       />
@@ -19,7 +22,7 @@ import { Image } from "astro:assets";
         class="hidden absolute inset-0 flex w-full h-full mx-auto items-center justify-center"
         id=`svg-overlay-${content.id}`
       >
-        <div class="mx-auto">
+        <div class="mx-auto rounded-md">
           <svg
             class="w-20"
             xmlns="http://www.w3.org/2000/svg"
