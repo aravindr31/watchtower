@@ -2,6 +2,8 @@ import { ACCESS_TOKEN, ACCOUNT_ID } from "astro:env/server";
 
 export const TMDB_BASEURL = "https://api.themoviedb.org/3";
 
+export const YTS_BASEURL = "https://yts.mx/api/v2";
+
 export const TMDB_HEADER = {
   headers: {
     accept: "application/json",

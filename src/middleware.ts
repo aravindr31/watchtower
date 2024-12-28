@@ -3,7 +3,10 @@ import { generateToken, verifyToken } from "./lib/authdata";
 
 export const onRequest = defineMiddleware(
   async ({ request, url, cookies, redirect }, next) => {
-    if (url.pathname == "/api/v1/auth/markaswatched") {
+    if (
+      url.pathname == "/api/v1/auth/markaswatched" ||
+      url.pathname == "/api/v1/media/torrent.json"
+    ) {
       try {
         const authHeader = request.headers.get("authorization");
         if (!authHeader)
@@ -17,7 +20,6 @@ export const onRequest = defineMiddleware(
         await verifyToken(token);
         return next();
       } catch (err) {
-        console.log(err);
         return new Response(JSON.stringify({ valid: false, error: err }), {
           status: 403,
           headers: { "Content-Type": "application/json" },
@@ -52,8 +54,6 @@ export const onRequest = defineMiddleware(
 
         if (valid) {
           const jwt = await generateToken();
-          console.log("Generated JWT:", jwt);
-
           cookies.set("access-token", jwt, {
             httpOnly: false,
             path: "/",

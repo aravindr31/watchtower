@@ -1,0 +1,126 @@
+---
+const { imdb_id } = Astro.props;
+let isError = false;
+let torrentData: any[] = [];
+let retries = 5;
+
+const fetchContentFromDB = async () => {
+  const access_token = Astro.cookies.get("access-token")?.value;
+  if (!access_token) return;
+  try {
+    const response = await fetch(
+      `${Astro.url.origin}/api/v1/media/torrent.json?id=${imdb_id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      if (response.status == 403) return;
+      throw new Error();
+    }
+    const parsedRes = await response.json();
+    if (!parsedRes.success) throw new Error();
+    torrentData = parsedRes?.success ? parsedRes?.torrents : [];
+  } catch (error) {
+    if (retries > 0) {
+      retries--;
+      await fetchContentFromDB();
+    } else {
+      isError = true;
+      console.log(error);
+    }
+  }
+};
+await fetchContentFromDB();
+---
+
+{
+  !isError && torrentData.length > 0 && (
+    <div class="container mx-auto px-4 py-16 border-b border-gray-900">
+      <h2 class="text-2xl md:text-4xl font-medium md:font-semibold">
+        Downloads
+      </h2>
+      <div class="flex flex-col mt-6">
+        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div class="shadow overflow-hidden sm:rounded-lg">
+              <table class="min-w-full text-sm text-gray-100">
+                <thead class="bg-gray-800 text-xs uppercase font-medium">
+                  <tr>
+                    {Object.keys(torrentData[0])
+                      .filter((item) => item != "hash")
+                      .map((item) => (
+                        <th
+                          scope="col"
+                          class="px-6 py-3 text-left tracking-wider"
+                        >
+                          {item == "url" ? "Torrent" : item}
+                        </th>
+                      ))}
+                  </tr>
+                </thead>
+                <tbody class="bg-gray-800">
+                  {torrentData.map((item) => (
+                    <tr class="bg-black bg-opacity-20">
+                      {Object.keys(item).map((value: string) =>
+                        value != "hash" ? (
+                          <td class="px-6 py-4 whitespace-nowrap uppercase text-gray-300 hover:text-gray-100 cursor-default">
+                            {value == "url" ? (
+                              <a
+                                href={item[value]}
+                                class="flex justify-center items-center w-full bg-accent-dark text-white rounded-sm font-medium px-4 py-2 hover:bg-accent-light transition ease-in-out duration-150"
+                              >
+                                <svg
+                                  fill="#ffffff"
+                                  height="20px"
+                                  width="20px"
+                                  version="1.1"
+                                  id="Capa_1"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                                  viewBox="0 0 298 298"
+                                  xml:space="preserve"
+                                  stroke="#ffffff"
+                                >
+                                  <g stroke-width="0" />
+                                  <g
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  />
+                                  <g>
+                                    {" "}
+                                    <g>
+                                      {" "}
+                                      <path d="M166.395,132v-8.586c0-9.28-7.279-16.414-16.561-16.414h-0.213c-9.281,0-17.227,7.134-17.227,16.414V132H166.395z" />{" "}
+                                      <polygon points="214.395,51 264.605,51 214.395,0 " />{" "}
+                                      <path d="M199.395,58.5V0H59.228C45.442,0,33.395,11.381,33.395,25.166v247.668c0,13.785,12.048,25.166,25.833,25.166h181 c13.785,0,24.167-11.381,24.167-25.166V66h-57.167C203.085,66,199.395,62.643,199.395,58.5z M186.395,186.861 c0,11.028-8.139,20.139-19.167,20.139h-35c-11.028,0-20.833-9.11-20.833-20.139v-35c0-5.487,2-10.428,6-14.011v-14.437 c0-17.551,14.674-31.414,32.227-31.414h0.213c17.553,0,31.561,13.863,31.561,31.414v15.006c3,3.53,5,8.233,5,13.441V186.861z" />{" "}
+                                      <path d="M135.15,161.219c0,4.997,2.245,9.399,6.245,11.984v11.566c0,3.949,3.553,7.146,7.502,7.146 c3.947,0,7.498-3.197,7.498-7.146v-10.959c5-2.462,7.578-7.177,7.578-12.592c0-7.959-6.453-14.412-14.412-14.412 C141.603,146.807,135.15,153.26,135.15,161.219z" />{" "}
+                                    </g>{" "}
+                                  </g>
+                                </svg>
+                                <span class="ml-2 text-white uppercase text-[13px] text-center font-medium tracking-[2px] transition-all duration-300 ease-in-out font-sans">
+                                  Download
+                                </span>
+                              </a>
+                            ) : (
+                              item[value]
+                            )}
+                          </td>
+                        ) : (
+                          ""
+                        )
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

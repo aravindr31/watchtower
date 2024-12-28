@@ -3,10 +3,7 @@ const { content, media_type, recommend = false } = Astro.props;
 import { Image } from "astro:assets";
 ---
 
-<div
-  class=`mt-8 ${recommend == true ? "mx-2" : ""}`
-  transition:name="content-data"
->
+<div class=`mt-8 ${recommend == true ? "mx-2" : ""}`>
   <div class="relative group">
     <a href={`/${media_type}/${content.id}`} class="block relative">
       <Image
@@ -17,6 +14,7 @@ import { Image } from "astro:assets";
         class="thumbnail hover:opacity-75 transition ease-in-out duration-150 rounded-md shadow-xl"
         id=`movie-poster-${content.id}`
         inferSize={true}
+        transition:name={`content-data-${content.id}`}
       />
       <div
         class="hidden absolute inset-0 flex w-full h-full mx-auto items-center justify-center"
