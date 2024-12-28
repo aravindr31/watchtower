@@ -20,6 +20,7 @@ export const getMinimalTvData = async (id) => {
       id: result?.id,
       name: result?.name,
       poster_path: result?.poster_path,
+      imdb_id: result?.imdb_id,
       vote_average: parseFloat(result?.vote_average.toFixed(1)),
       first_air_date: new Date(result?.first_air_date).toLocaleDateString(
         "en-us",

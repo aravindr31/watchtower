@@ -16,6 +16,7 @@ export const getMinimalMovieData = async (id) => {
       id: result?.id,
       title: result?.title,
       poster_path: result?.poster_path,
+      imdb_id: result?.imdb_id,
       vote_average: parseFloat(result?.vote_average.toFixed(1)),
       release_date: new Date(result?.release_date).toLocaleDateString("en-us", {
         year: "numeric",

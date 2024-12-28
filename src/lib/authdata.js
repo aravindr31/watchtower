@@ -39,7 +39,6 @@ export const verifyToken = async (token) => {
     });
     return verifed.payload;
   } catch (err) {
-    // console.log("Invalid token", err);
     throw new Error(err.code);
   }
 };

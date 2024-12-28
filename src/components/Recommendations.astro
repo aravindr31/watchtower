@@ -1,5 +1,6 @@
 ---
 import ContentCard from "./ContentCard.astro";
+import Fallback from "./Fallback.astro";
 
 const { id, media } = Astro.props;
 const url = `${Astro.url.origin}/api/v1/tmdb/recommendations.json?id=${id}&media=${media}`;
