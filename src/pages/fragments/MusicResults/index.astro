@@ -1,0 +1,70 @@
+---
+import { Image } from "astro:assets";
+import TopArtists from "../../../components/TopArtists.astro";
+import Fallback from "../../../components/Fallback.astro";
+import TopTracks from "../../../components/TopTracks.astro";
+import Following from "../../../components/Following.astro";
+
+const spotify_access_token = Astro.cookies.get("spotify-access-token")?.value;
+console.log(spotify_access_token);
+
+let isError = false;
+let userData = null;
+
+const fetchSpotifyUserData = async () => {
+  try {
+    const response = await fetch(
+      `${Astro.url.origin}/api/v1/music/user/me.json`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${spotify_access_token}`,
+        },
+      }
+    );
+    if (!response.ok) throw new Error("Failed fetching data from spotify");
+    const data = await response.json();
+    userData = { ...data };
+  } catch (err) {
+    console.log(err);
+    isError = true;
+  }
+};
+await fetchSpotifyUserData();
+---
+
+{
+  !isError && userData != null && (
+    <>
+      <div class="container mx-auto px-4 py-16 flex flex-col justify-center items-center z-10 ">
+        <div class="flex-none">
+          <Image
+            inferSize={true}
+            src={userData.images[0].url}
+            alt={`${userData.id} Poster`}
+            class="content-poster w-64 lg:w-64 rounded-full"
+            id="content-poster"
+          />
+        </div>
+        <div class="my-4">
+          <h2 class="text-3xl  md:text-4xl mt-4 md:mt-0 mb-2 font-medium md:font-bold subpixel-antialiased text-center md:text-left">
+            {userData.display_name}
+          </h2>
+        </div>
+      </div>
+      <div>
+        <TopArtists server:defer>
+          <Fallback />
+        </TopArtists>
+      </div>
+      <div>
+        <TopTracks server:defer />
+      </div>
+      <div>
+        <Following server:defer>
+          <Fallback />
+        </Following>
+      </div>
+    </>
+  )
+}

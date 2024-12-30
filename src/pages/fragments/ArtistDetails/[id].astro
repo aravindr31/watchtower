@@ -1,0 +1,83 @@
+---
+import { Image } from "astro:assets";
+import TopAlbums from "../../../components/TopAlbums.astro";
+import Fallback from "../../../components/Fallback.astro";
+import TopTracks from "../../../components/TopTracks.astro";
+import Following from "../../../components/Following.astro";
+import TopAlbums from "../../../components/TopAlbums.astro";
+
+const spotify_access_token = Astro.cookies.get("spotify-access-token")?.value;
+
+let isError = false;
+let artistData = null;
+
+const { id } = Astro.params;
+
+const fetchSpotifyArtistData = async () => {
+  try {
+    const response = await fetch(
+      `${Astro.url.origin}/api/v1/music/artist/${id}.json`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${spotify_access_token}`,
+        },
+      }
+    );
+    if (!response.ok) throw new Error("Failed fetching data from spotify");
+    const data = await response.json();
+    artistData = { ...data };
+  } catch (err) {
+    console.log(err);
+    isError = true;
+  }
+};
+await fetchSpotifyArtistData();
+
+console.log(artistData);
+---
+
+{
+  !isError && artistData != null && (
+    <>
+      <div class="container mx-auto px-4 py-16 flex flex-col justify-center items-center z-10 ">
+        <div class="flex-none">
+          <Image
+            inferSize={true}
+            src={artistData.images[0].url}
+            alt={`${artistData.id} Poster`}
+            class="content-poster w-64 lg:w-64 rounded-full"
+            id="content-poster"
+          />
+        </div>
+        <div class="my-4">
+          <h2 class="text-3xl  md:text-4xl mt-4 md:mt-0 mb-2 font-medium md:font-bold subpixel-antialiased text-center md:text-left">
+            {artistData.name}
+          </h2>
+          <div class=" flex flex-row items-center justify-around">
+            <div class="text-center">
+              <h3 class="mx-1 text-xl font-montserrat text-accent-dark">
+                {parseInt(artistData.followers.total).toLocaleString("en-US")}
+              </h3>
+              <span class="text-accent-light">followers</span>
+            </div>
+            <div class="text-center">
+              <h3 class="mx-1 text-xl font-montserrat text-accent-dark">
+                {artistData.popularity} %{" "}
+              </h3>
+              <span class="text-accent-light">popularity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <TopTracks server:defer artist_id={id} />
+      </div>
+
+      <div>
+        <TopAlbums server:defer artist_id={id} />
+      </div>
+    </>
+  )
+}

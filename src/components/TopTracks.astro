@@ -1,0 +1,91 @@
+---
+import { Image } from "astro:assets";
+
+const spotify_access_token = Astro.cookies.get("spotify-access-token")?.value;
+
+const { artist_id = null } = Astro.props;
+
+const url =
+  artist_id == null
+    ? `${Astro.url.origin}/api/v1/music/user/toptracks.json`
+    : `${Astro.url.origin}/api/v1/music/artist/${artist_id}/toptracks.json`;
+
+let isError = false;
+let tracksData = null;
+
+const fetchSpotifyTopTracks = async () => {
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${spotify_access_token}`,
+      },
+    });
+    if (!response.ok) throw new Error("Failed fetching data from spotify");
+    tracksData = await response.json();
+  } catch (err) {
+    console.log(err);
+    isError = true;
+  }
+};
+await fetchSpotifyTopTracks();
+console.log(tracksData);
+---
+
+{
+  !isError && tracksData != null && (
+    <div class="container mx-auto px-4 py-16">
+      <h2 class="text-2xl md:text-4xl font-medium md:font-semibold">
+        Top tracks this month
+      </h2>
+      <div class="flex flex-col mt-6">
+        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div class="shadow overflow-hidden rounded-sm">
+              <table class="min-w-full text-sm text-gray-100">
+                <tbody>
+                  {tracksData.map((track) => (
+                    <tr
+                      class={`bg-opacity-20 hover:bg-accent-dark ${track.now_playing ? "bg-accent-light" : "bg-black"}`}
+                    >
+                      <td class="px-6 py-4 whitespace-nowrap text-gray-300 hover:text-gray-100 cursor-default flex flex-row items-center">
+                        <div class="w-14 h-14 rounded-full overflow-hidden mx-2">
+                          <a href={`/music/album/${track.album.id}`}>
+                            <Image
+                              inferSize={true}
+                              id={`person-photo-${track.album.id}`}
+                              src={track.album.images[0].url}
+                              alt={track.album.name}
+                              class="shadow-xl object-cover w-full h-full"
+                            />
+                          </a>
+                        </div>
+                        <div>
+                          <a
+                            class="hover:underline"
+                            href={`https://open.spotify.com/track/${track.id}`}
+                          >
+                            {track.name}
+                          </a>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-gray-300 hover:text-gray-100 cursor-default">
+                        {track.artists.map((artist) => artist.name).join(", ")}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-gray-300 hover:text-gray-100 cursor-default">
+                        {track.album.name}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-gray-300 hover:text-gray-100 cursor-default">
+                        {track.duration}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

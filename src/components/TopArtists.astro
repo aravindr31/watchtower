@@ -1,0 +1,66 @@
+---
+import { Image } from "astro:assets";
+
+const spotify_access_token = Astro.cookies.get("spotify-access-token")?.value;
+
+let isError = false;
+let artistsData = null;
+
+const fetchSpotifyTopArtists = async () => {
+  try {
+    const response = await fetch(
+      `${Astro.url.origin}/api/v1/music/user/topartist.json`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${spotify_access_token}`,
+        },
+      }
+    );
+    if (!response.ok) throw new Error("Failed fetching data from spotify");
+    const data = await response.json();
+    artistsData = { ...data };
+  } catch (err) {
+    console.log(err);
+    isError = true;
+  }
+};
+await fetchSpotifyTopArtists();
+---
+
+{
+  !isError && artistsData != null && (
+    <div class="container mx-auto px-4 py-16">
+      <h2 class="text-2xl md:text-4xl font-medium md:font-semibold">
+        Top Artists
+      </h2>
+      <div class="flex flex-row overflow-scroll my-4">
+        {artistsData.items.map((item) => (
+          <div class="mx-4" transition:name={`person-data-${item.id}`}>
+            <div class="w-40 h-40 rounded-full overflow-hidden">
+              <a href={`/music/artist/${item.id}`}>
+                <Image
+                  inferSize={true}
+                  id={`person-photo-${item.id}`}
+                  src={item.images[1].url}
+                  alt={item.name}
+                  class="shadow-xl object-cover w-full h-full"
+                />
+              </a>
+            </div>
+
+            <div class="mt-2">
+              <a
+                href={`/music/artist/${item.id}`}
+                class="text-md mt-2 hover:text-gray:300"
+              >
+                {item.name}
+              </a>
+              <div class="text-sm text-gray-400 capitalize">{item.type}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

@@ -28,10 +28,23 @@ export default defineConfig({
         ACCOUNT_ID: envField.string({ context: "server", access: "secret" }),
         JWT_ISSUER: envField.string({ context: "server", access: "secret" }),
         JWT_AUDIENCE: envField.string({ context: "server", access: "secret" }),
+
         JWT_EXPIRATION_TIME: envField.string({
           context: "server",
           access: "public",
           default: "10m",
+        }),
+        SPOTIFY_CLIENT_ID: envField.string({
+          context: "server",
+          access: "secret",
+        }),
+        SPOTIFY_CLIENT_SECRET: envField.string({
+          context: "server",
+          access: "secret",
+        }),
+        SPOTIFY_REDIRECT_URL: envField.string({
+          context: "server",
+          access: "secret",
         }),
       },
     },
