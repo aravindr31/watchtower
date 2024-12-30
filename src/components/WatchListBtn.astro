@@ -80,13 +80,17 @@ await checkState();
     const buttonSpan = button?.querySelector("span");
     const url = window.location.pathname;
 
-    const getCookie = (cookieName: string) => {
-      const value = `${document.cookie}`;
-      const parts = value.split(`${cookieName}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
+    const getAccessToken = () => {
+      const regex = /^\s*access-token/gm;
+      const cookies = `${document.cookie}`;
+      const cookieItems = cookies.split(";");
+      const token = cookieItems.map((item) => {
+        if (item.search(regex) == 0) return item.split("=")[1];
+        return null;
+      });
+      if (token) return token;
       return null;
     };
-
     const handleButtonClick = async () => {
       console.log("Marking...");
       if (buttonSpan) buttonSpan.textContent = "Marking...";
@@ -99,7 +103,7 @@ await checkState();
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
-              Authorization: `Bearer ${getCookie("access-token")}`,
+              Authorization: `Bearer ${getAccessToken()}`,
             },
             body: JSON.stringify({
               media: data[1],

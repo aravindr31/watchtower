@@ -1,0 +1,21 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+export const prerender = true;
+---
+
+<Layout title="403 Unauthorized">
+  <div class="w-full m-auto mt-8 flex flex-row justify-center">
+    <h1 class="font-montserrat text-9xl">403</h1>
+  </div>
+  <div class="error-msg-container my-auto max-w-full text-center font-mono">
+    <h2 class="text-3xl my-2">Looks like you are not allowed here!!</h2>
+    <div class="flex flex-row w-full items-center justify-center">
+      <a
+        href="/"
+        class="text-accent-light font-mono uppercase hover hover:text-accent-dark"
+        >Home</a
+      >
+    </div>
+  </div>
+</Layout>
