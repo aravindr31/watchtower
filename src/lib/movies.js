@@ -64,6 +64,7 @@ export const getPageWiseMovies = async (page) => {
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
       movies: movieData,
+      totalItems: totalItems,
     };
   } catch (err) {
     console.log("Error Fetching page-wise movies", err.message);
