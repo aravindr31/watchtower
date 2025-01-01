@@ -43,7 +43,7 @@ await fetchSearch();
   !isError && (
     <div class="container mx-auto px-4 pt-16 mb-16">
       <div class="search-result">
-        <h2 class="uppercase tracking-wider text-red-500 text-lg font-semibold">
+        <h2 class="uppercase tracking-wider text-accent-light text-lg font-montserrat">
           Search Results
         </h2>
         {dataArray.length > 0 ? (
@@ -63,17 +63,10 @@ await fetchSearch();
           </>
         ) : (
           <div class="text-center py-16">
-            <h1 class="mb-3 text-8xl font-bold ">Oops!</h1>
-            <hr class="mb-5 w-36 h-1 bg-teal border-0" />
-            <p class="mb-5 text-xl sm:text-3xl">
-              Sorry, there was an error loading this page.
+            <p class="mb-5 text-xl sm:text-3xl text-accent-light font-inter">
+              {`Your search - ${searchQuery} - did not match any movies or shows`}
+              .
             </p>
-            <a
-              class="mx-4 h-16 py-3 px-6 text-white bg-red-500 uppercase text-[15px] text-center font-medium tracking-[2px] transition-all duration-300 ease-in-out hover:tracking-[2.5px]"
-              href="javascript:window.location.reload(true)"
-            >
-              Retry
-            </a>
           </div>
         )}
       </div>

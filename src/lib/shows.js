@@ -63,6 +63,7 @@ export const getPageWiseShows = async (page) => {
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
       shows: showData,
+      totalItems: totalItems,
     };
   } catch (err) {
     console.log("Error Fetching page-wise shows", err.message);

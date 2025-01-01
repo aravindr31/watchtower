@@ -64,9 +64,9 @@ await fetchContentDetails()
 <InternalError/>
 )}
 { !isError &&  content && (
-    <div class="bg-cover bg-center mt-[-170px] md:mt-[-75px]" style={{ backgroundImage:`url(${content.backdrop_path})` }} transition:name={`content-data-${content.id}`} >
+    <div class="bg-cover bg-center mt-[-290px] sm:mt-[-275px] md:mt-[-275px] lg:mt-[-80px]" style={{ backgroundImage:`url(${content.backdrop_path})` }} transition:name={`content-data-${content.id}`} >
         <div class="backdrop-blur-lg bg-black/30 bg-gradient-to-t from-primary to-transparent">
-            <div class="container mx-auto px-4 py-52 md:py-32 flex flex-col items-center md:flex-row z-10 ">
+            <div class="container mx-auto px-4 py-80 lg:py-32 flex flex-col items-center md:flex-row z-10 ">
                 <div class="flex-none">
                     <Image inferSize={true} src={content.poster_path} alt={`${content.title || content.name} Poster`} class="content-poster w-64 lg:w-96 rounded-sm" id="content-poster"/>
                     <WatchListBtn media_type={media_type} id={content.id}/>
@@ -147,7 +147,7 @@ await fetchContentDetails()
             </div>
         </Downloads>)}
     </div> 
-    <div class="border-b border-tertiary">
+    <div>
         <Caurosel images={content?.images} title || content.name={content?.title || content.name} server:defer>
             <div class="flex w-full mx-auto mt-8">
                 <Fallback />
