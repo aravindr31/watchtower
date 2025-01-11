@@ -51,12 +51,12 @@ await fetchContentFromDB();
     <div class="container mx-auto px-4 pt-16 mb-16">
       <div class="popular-movies ">
         <h2 class="uppercase tracking-wider text-accent-light text-lg font-montserrat flex flex-row">
-          Recent{" "}
           {media_type == "movie"
-            ? "movies"
+            ? "Cinema"
             : media_type == "tv"
-              ? "shows"
-              : "media"}
+              ? "Show"
+              : "media"}{" "}
+          Log
           <span class="mx-1 text-accent-dark">
             <h5> - </h5>
           </span>

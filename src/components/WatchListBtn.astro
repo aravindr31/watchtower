@@ -5,6 +5,8 @@ let isAvaliable: boolean = true;
 let isError = false;
 let retires = 5;
 
+const isTokenAvalibale = Astro.cookies.get("access-token")?.boolean() || false;
+
 const checkState = async () => {
   try {
     const response = await fetch(url, {
@@ -33,7 +35,7 @@ await checkState();
 ---
 
 {
-  !isError ? (
+  !isError && isTokenAvalibale ? (
     <div class=" flex w-full mt-2 rounded-sm">
       <div class="justify-center mx-auto items-center w-full rounded-sm">
         <button
