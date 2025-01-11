@@ -180,7 +180,7 @@ if (spotifyAccessToken) {
       <div class="bg-primary/30 my-1 p-2 rounded-sm">
         <a href="/tv" class="hover:text-accent-light font-mono">Shows</a>
       </div>
-      <div class="bg-primary/30 my-1 p-2 rounded-sm">
+      {token && <div class="bg-primary/30 my-1 p-2 rounded-sm">
         <a
           href="/music"
           class="hover:text-accent-light font-mono flex items-center space-x-2"
@@ -218,7 +218,7 @@ if (spotifyAccessToken) {
             </g>
           </svg>
         </a>
-      </div>
+      </div>}
     </div>
     {!hideNavSearch && <Searchbar />}
   </div>
